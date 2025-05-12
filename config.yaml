@@ -1,0 +1,77 @@
+# Configuration de l'application Crypto Oracle
+
+# Niveau de journalisation global
+log_level: "info"
+
+# Configuration de l'API
+api:
+  host: "0.0.0.0"
+  port: 8080
+  read_timeout: 15     # secondes
+  write_timeout: 15    # secondes
+  max_header_bytes: 1048576  # 1MB
+
+# Configuration de la base de données
+database:
+  host: "db"
+  port: 5432
+  name: "crypto_oracle"
+  user: "oracle_user"
+  password: "oracle_pass"
+  ssl_mode: "disable"
+  max_connections: 20
+  min_connections: 5
+  max_conn_lifetime: 3600  # secondes
+  max_conn_idle_time: 1800  # secondes
+  health_check_period: 60  # secondes
+
+# Configuration du cache Redis
+redis:
+  host: "redis"
+  port: 6379
+  password: ""
+  db: 0
+  pool_size: 10
+  min_idle_conns: 2
+  max_retries: 3
+  dial_timeout: 5  # secondes
+  read_timeout: 3  # secondes
+  write_timeout: 3  # secondes
+
+# Configuration de l'API GMGN
+gmgn:
+  base_url: "https://gmgn.ai"
+  device_id: "411fa5e2-ade9-4058-9fef-90147baf61fe"
+  client_id: "gmgn_web_2025.0128.214338"
+  app_ver: "2025.0128.214338"
+  tz_name: "Africa/Casablanca"
+  tz_offset: "3600"
+  app_lang: "en"
+  from_app: "gmgn"
+  request_timeout: 30  # secondes
+  rate_limit_delay: 300  # millisecondes entre les requêtes
+
+# Configuration du système de confiance
+trust_system:
+  maintenance_interval: 21600  # 6 heures en secondes
+  wallet_similarity_threshold: 0.2  # seuil minimum pour considérer deux wallets comme similaires
+  score_update_interval: 3600  # 1 heure en secondes
+  token_monitoring_interval: 1800  # 30 minutes en secondes
+  max_cache_size: 100000  # nombre maximum d'entrées en cache
+  cache_expiration: 3600  # secondes
+
+# Configuration du scanner de tokens
+token_scanner:
+  poll_interval: 300  # secondes entre les scans
+  max_tokens_per_scan: 100
+  concurrent_workers: 4
+  new_token_ttl: 604800  # 7 jours en secondes
+  completed_token_ttl: 2592000  # 30 jours en secondes
+
+# Configuration du gestionnaire de wallets
+wallet_manager:
+  poll_interval: 600  # secondes entre les mises à jour
+  concurrent_workers: 4
+  tracked_wallets_limit: 10000
+  wallets_per_batch: 50
+  inactive_wallet_ttl: 2592000  # 30 jours en secondes 

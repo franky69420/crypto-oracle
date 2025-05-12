@@ -1,0 +1,1874 @@
+# 🔮 CRYPTO ORACLE MEMECOIN DETECTOR V4.2
+## Architecture Technique Complète - Production Ready
+
+---
+
+## 1. VISION ET MISSION
+
+### 1.1 Objectif Principal
+Système de détection et surveillance intégré des tokens Solana post-AMM à fort potentiel, capable d'identifier et monitorer les tokens prometteurs tant en phase initiale qu'en réactivation tardive, avec une précision prédictive supérieure à 85%.
+
+### 1.2 Capacités Stratégiques
+- **Détection précoce**: Identification des tokens à fort potentiel dès leur migration AMM
+- **Filtrage anti-wash trading**: Détection automatique des tokens avec volume artificiel et métriques manipulées
+- **Intelligence smart money**: Analyse pondérée des mouvements et concentrations des wallets de confiance
+- **Suivi adaptatif**: Monitoring évolutif basé sur le comportement des wallets et métriques de marché
+- **Intelligence cumulative**: Système auto-apprenant basé sur l'historique des interactions
+- **Réactivation tracking**: Détection des "late bloomers" jusqu'à 30 jours après leur lancement
+- **Filtrage anti-bruit**: Identification proactive des schémas de manipulation et dump coordonnés
+
+---
+
+## 2. ARCHITECTURE SYSTÈME OPTIMISÉE
+
+### 2.1 Vue d'Ensemble
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                       DÉTECTION AVANCÉE ET MONITORING                    │
+├───────────────┬────────────────────┬────────────────┬───────────────────┤
+│               │                    │                │                   │
+│  GMGN GATEWAY │───▶ TOKEN ENGINE   │───▶ SMART      │───▶ MEMORY OF     │
+│  + PAGINATION │     + WASH FILTER  │     WALLET     │     TRUST         │
+│               │                    │     ANALYZER   │     NETWORK       │
+└───────────────┘    └───────┬───────┘    └────┬─────┘    └───────┬───────┘
+                             │                 │                   │
+┌───────────────┐    ┌───────▼─────────┐   ┌───▼───────────┐   ┌──▼────────────┐
+│               │    │                 │   │               │   │               │
+│ ALERT MANAGER │◀───┤  X-SCORE ENGINE │◀──┤ SIGNAL        │◀──┤ ANTI-DUMP     │
+│               │    │  AMÉLIORÉ       │   │ DETECTOR      │   │ DETECTOR      │
+└───────┬───────┘    └─────────────────┘   └───────────────┘   └───────────────┘
+        │
+        ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                     SURVEILLANCE ET DÉTECTION TARDIVE                    │
+├───────────────┬────────────────────┬────────────────┬───────────────────┤
+│               │                    │                │                   │
+│ LIFECYCLE     │ REACTIVATION       │ SMART WALLET   │ DASHBOARD &       │
+│ MANAGER       │ DETECTOR           │ RETURN         │ NOTIFICATIONS     │
+│ ADAPTATIF     │                    │ DETECTOR       │                   │
+└───────────────┘ └──────────────────┘ └──────────────┘ └─────────────────┘
+```
+
+### 2.2 Pipeline de Traitement Optimisé
+
+```
+                ┌────────────────┐
+                │                │
+                │  GMGN API      │
+                │  (Pagination)  │
+                │                │
+                └───────┬────────┘
+                        │
+                        ▼
+┌───────────────────────────────────────────────────────────┐
+│                                                           │
+│           REDIS STREAMS & CONSUMER GROUPS                 │
+│                                                           │
+└───────┬─────────────┬────────────────┬───────────────────┘
+        │             │                │
+        ▼             ▼                ▼
+┌───────────────┐ ┌──────────────┐ ┌──────────────────┐
+│  SHORT-TERM   │ │ LONG-TERM    │ │ TIMESCALEDB      │
+│  HOT CACHE    │ │ WARM CACHE   │ │ STORAGE LAYER    │
+│  (Redis)      │ │ (Redis)      │ │ (PostgreSQL)     │
+└───────────────┘ └──────────────┘ └──────────────────┘
+```
+
+### 2.3 Distribution des Responsabilités
+
+| Composant | Responsabilités |
+|-----------|-----------------|
+| GMGN Gateway + Pagination | Interface API, gestion pagination complète, rate limiting, caching, résilience |
+| Token Engine + Wash Filter | Classification tokens, filtrage volume/mcap ratio, tracking lifecycle |
+| Smart Wallet Analyzer | Profiling wallets, Smart Money detection, Sniper detection, Trust Network |
+| Signal Detector | Détection patterns, clustering, Anti-Dump detection |
+| X-Score Core Amélioré | Scoring intelligent multi-critères avec pondération smart money et bonus sniper |
+| Lifecycle Manager Adaptatif | Gestion états tokens, TTL adaptatif, transitions |
+| Reactivation Detector | Suivi tokens dormants, détection renaissance |
+| Smart Wallet Return Detector | Analyse retour wallets smart sur tokens dormants |
+| Memory of Trust | Base de connaissances cumulative des interactions |
+
+---
+
+## 3. GESTION DU CYCLE DE VIE ADAPTATIF
+
+### 3.1 États de Lifecycle Complets
+
+```
+                    ┌─────────────┐
+                    │             │
+                    │   CREATED   │
+                    │             │
+                    └──────┬──────┘
+                           │
+                           ▼
+┌─────────────┐     ┌──────────────┐     ┌─────────────┐
+│             │     │              │     │             │
+│  COMPLETED  │────▶│  DISCOVERED  │────▶│  VALIDATED  │
+│             │     │              │     │             │
+└─────────────┘     └──────────────┘     └──────┬──────┘
+                                                │
+                 ┌────────────────┐             │
+                 │                │             │
+┌────────────────▼─┐   ┌──────────▼────────┐    │
+│                  │   │                   │    │
+│    SLEEP_MODE    │◀──┤       HYPED      │◀───┘
+│                  │   │                   │
+└──────┬───────────┘   └───────┬───────────┘
+       │                       │
+       │     ┌─────────────────▼──────┐
+       │     │                        │
+       └────▶│  MONITORING_LIGHT      │
+             │                        │
+             └────────────┬───────────┘
+                          │
+             ┌────────────▼───────────┐
+             │                        │
+             │     REACTIVATED        │
+             │                        │
+             └────────────────────────┘
+```
+
+### 3.2 Définition des États
+
+| État | Description | TTL | Polling |
+|------|-------------|-----|---------|
+| COMPLETED | Token détecté migré en AMM | - | - |
+| DISCOVERED | Premier scan effectué | 6h | 15min |
+| VALIDATED | X-Score > 60, prometteur | 24h | 5min |
+| HYPED | X-Score > 80, haute priorité | 48h | 1min |
+| SLEEP_MODE | Activité ralentie | 30j | 1h |
+| MONITORING_LIGHT | Potentiel de réactivation | 30j | 15min |
+| REACTIVATED | Regain d'activité | 48h | 1min |
+
+### 3.3 Politique de Transition Intelligente
+
+```python
+def determine_next_state(token, metrics):
+    """
+    Détermine l'état suivant du token basé sur les métriques actuelles
+    """
+    current_state = token["lifecycle_state"]
+    current_x_score = metrics["x_score"]
+    volume_1h = metrics["volume_1h"]
+    volume_growth = metrics["volume_growth_rate"]
+    price_growth = metrics["price_change_1h"]
+    smart_wallet_activity = metrics["smart_wallet_activity_score"]
+    time_since_completion = (datetime.now() - token["completion_timestamp"]).total_seconds() / 86400  # en jours
+    
+    # Transitions basées sur l'état actuel
+    if current_state == "DISCOVERED":
+        if current_x_score >= 80:
+            return "HYPED"
+        elif current_x_score >= 60:
+            return "VALIDATED"
+        else:
+            return "SLEEP_MODE"
+    
+    elif current_state == "VALIDATED":
+        if current_x_score >= 80:
+            return "HYPED"
+        elif current_x_score < 50 and time_since_completion > 1:
+            return "SLEEP_MODE"
+        else:
+            return "VALIDATED"  # maintien
+    
+    elif current_state == "HYPED":
+        if current_x_score >= 75:
+            return "HYPED"  # maintien
+        elif current_x_score >= 60:
+            return "VALIDATED"  # dégradation légère
+        else:
+            return "SLEEP_MODE"  # fort ralentissement
+    
+    elif current_state == "SLEEP_MODE":
+        # Critères de réactivation
+        if (volume_1h > 50000 and volume_growth > 2.0) or smart_wallet_activity > 70:
+            return "REACTIVATED"
+        elif smart_wallet_activity > 40 or volume_growth > 1.5:
+            return "MONITORING_LIGHT"
+        else:
+            return "SLEEP_MODE"  # maintien
+    
+    elif current_state == "MONITORING_LIGHT":
+        if (volume_1h > 100000 and volume_growth > 2.0) or (price_growth > 0.3 and smart_wallet_activity > 60):
+            return "REACTIVATED"
+        elif volume_1h < 10000 and smart_wallet_activity < 20 and time_since_completion > 14:
+            return "SLEEP_MODE"
+        else:
+            return "MONITORING_LIGHT"  # maintien
+    
+    elif current_state == "REACTIVATED":
+        if current_x_score >= 80:
+            return "HYPED"
+        elif current_x_score >= 60:
+            return "VALIDATED"
+        else:
+            return "MONITORING_LIGHT"
+    
+    return current_state  # fallback = maintien
+```
+
+### 3.4 Mécanisme TTL Adaptatif
+
+```python
+def calculate_token_ttl(token):
+    """
+    Calcule la durée de vie résiduelle du token basée sur son état et son potentiel
+    """
+    base_ttl = {
+        "DISCOVERED": 6 * 3600,       # 6 heures
+        "VALIDATED": 24 * 3600,       # 24 heures
+        "HYPED": 48 * 3600,           # 48 heures
+        "SLEEP_MODE": 30 * 86400,     # 30 jours
+        "MONITORING_LIGHT": 30 * 86400, # 30 jours
+        "REACTIVATED": 48 * 3600      # 48 heures
+    }
+    
+    state = token["lifecycle_state"]
+    x_score = token["latest_x_score"] or 0
+    historical_volume = token["historical_max_volume"] or 0
+    time_factor = min(1.0, get_token_age_days(token) / 30.0)
+    
+    # Facteurs d'ajustement
+    score_factor = 1.0 + (x_score / 100.0)  # 1.0 - 2.0
+    volume_factor = 1.0 + min(1.0, historical_volume / 1000000.0)  # 1.0 - 2.0
+    
+    # TTL de base
+    ttl = base_ttl.get(state, 24 * 3600)
+    
+    # Tokens à fort historique ont un TTL plus long
+    if state in ["SLEEP_MODE", "MONITORING_LIGHT"]:
+        ttl = ttl * volume_factor
+    
+    # Tokens récents à haut score ont une extension de TTL
+    if state in ["VALIDATED", "HYPED"] and x_score > 70:
+        ttl = ttl * score_factor
+    
+    # Réduction progressive avec l'âge sauf pour les tokens à très haut volume historique
+    if state != "REACTIVATED" and historical_volume < 5000000:
+        ttl = ttl * (1.0 - (time_factor * 0.5))
+    
+    return int(ttl)
+```
+
+---
+
+## 4. PIPELINE DE DÉTECTION ET ANALYSE AMÉLIORÉ
+
+### 4.1 Processus de Détection
+
+```
+┌───────────────┐    ┌───────────────┐    ┌───────────────┐
+│               │    │               │    │               │
+│  EXTRACTION   │───▶│   FILTRAGE    │───▶│ ENRICHISSEMENT│
+│  PAGINÉE      │    │  OPTIMISÉ     │    │               │
+└───────────────┘    └───────────────┘    └───────┬───────┘
+                                                  │
+┌───────────────┐    ┌───────────────┐    ┌───────▼───────┐
+│               │    │               │    │               │
+│   X-SCORING   │◀───┤  ANTI-DUMP    │◀───┤   ANALYSE     │
+│   AMÉLIORÉ    │    │  VALIDATION   │    │  WALLET       │
+└───────┬───────┘    └───────────────┘    └───────────────┘
+        │
+┌───────▼───────┐    ┌───────────────┐
+│               │    │               │
+│  CLASSIFICATION│───▶│  NOTIFICATION │
+│               │    │               │
+└───────────────┘    └───────────────┘
+```
+
+### 4.2 Filtrage Multi-niveaux Optimisé
+
+```python
+def token_qualifies_for_monitoring(token, metrics):
+    """
+    Détermine si un token mérite d'être monitoré selon des critères stricts améliorés
+    """
+    # Niveau 1: Filtres basiques
+    if (metrics["market_cap_usd"] < 50000 or
+        metrics["holder_count"] < 50):
+        return False, "Failed basic filters"
+    
+    # Niveau 2: Qualité token
+    if (metrics["creator_balance_rate"] > 0.20 or
+        metrics["top_10_holder_rate"] > 0.70 or
+        metrics["is_wash_trading"] == True):
+        return False, "Failed quality filters"
+    
+    # NOUVEAU: Ratio volume/mcap - Détection wash trading
+    if (metrics["volume_1h"] / max(1.0, metrics["market_cap_usd"])) > 0.5:
+        return False, "Suspected wash trading (volume/mcap > 0.5)"
+    
+    # Niveau 3: Activité minimale
+    if metrics["volume_1h"] < 5000:
+        return False, "Insufficient volume"
+    
+    # Niveau 4: Structures wallet saines
+    wallet_metrics = metrics["wallet_metrics"]
+    if wallet_metrics:
+        if (wallet_metrics["dex_bot_ratio"] > 0.40 or
+            wallet_metrics["fresh_wallet_ratio"] > 0.70):
+            return False, "Suspicious wallet structure"
+    
+    # Niveau 5: Validation anti-dump
+    if metrics.get("anti_dump_detected", False) and metrics.get("anti_dump_severity", 0) > 60:
+        return False, "Anti-dump pattern detected"
+    
+    return True, "Passed all filters"
+```
+
+### 4.3 Analyse Wallet Optimisée avec Pagination
+
+```python
+def analyze_token_wallets(token_address, memory_of_trust):
+    """
+    Analyse complète des wallets pour un token avec pagination complète
+    """
+    # Récupérer données wallet avec pagination
+    all_active_wallets = []
+    next_pagination = None
+    
+    # Boucle de pagination pour récupérer TOUS les wallets
+    while True:
+        active_wallets_page, next_pagination = fetch_token_active_wallets(
+            token_address, 
+            pagination_token=next_pagination
+        )
+        
+        all_active_wallets.extend(active_wallets_page)
+        
+        # Si plus de résultats à paginer, sortir de la boucle
+        if not next_pagination:
+            break
+    
+    stats = {
+        "token_address": token_address,
+        "timestamp": datetime.now(),
+        "total_wallets": len(all_active_wallets),
+        "wallet_categories": {
+            "smart": 0,
+            "trusted": 0,
+            "fresh": 0,
+            "bot": 0,
+            "sniper": 0,
+            "bluechip": 0,
+            "bundler": 0
+        },
+        "trust_metrics": {
+            "avg_trust_score": 0,
+            "smart_money_ratio": 0,
+            "early_trusted_ratio": 0
+        },
+        "trade_patterns": {
+            "buy_orders": 0,
+            "sell_orders": 0,
+            "buy_sell_ratio": 0,
+            "avg_hold_time": 0
+        }
+    }
+    
+    # Analyser chaque wallet
+    wallet_details = []
+    trust_scores = []
+    
+    for wallet in all_active_wallets:
+        # Récupérer profil wallet
+        profile = get_wallet_profile(wallet["address"])
+        
+        # Obtenir trust score
+        trust_score = memory_of_trust.get_wallet_trust_score(wallet["address"])
+        trust_scores.append(trust_score)
+        
+        # Catégoriser wallet
+        categories = categorize_wallet(wallet, profile, trust_score)
+        for category in categories:
+            stats["wallet_categories"][category] += 1
+        
+        # Analyser transactions
+        transactions = get_wallet_token_transactions(wallet["address"], token_address)
+        
+        # Type d'ordre (buy/sell)
+        buy_count = sum(1 for tx in transactions if tx["action_type"] == "buy")
+        sell_count = sum(1 for tx in transactions if tx["action_type"] == "sell")
+        
+        stats["trade_patterns"]["buy_orders"] += buy_count
+        stats["trade_patterns"]["sell_orders"] += sell_count
+        
+        # Détails wallet
+        wallet_details.append({
+            "address": wallet["address"],
+            "trust_score": trust_score,
+            "categories": categories,
+            "entry_rank": wallet.get("entry_rank"),
+            "entry_time": wallet.get("first_transaction_timestamp"),
+            "volume": wallet.get("total_volume"),
+            "buys": buy_count,
+            "sells": sell_count
+        })
+    
+    # Calculer métriques globales
+    if trust_scores:
+        stats["trust_metrics"]["avg_trust_score"] = sum(trust_scores) / len(trust_scores)
+        stats["trust_metrics"]["smart_money_ratio"] = stats["wallet_categories"]["smart"] / max(1, stats["total_wallets"])
+    
+    if stats["trade_patterns"]["sell_orders"] > 0:
+        stats["trade_patterns"]["buy_sell_ratio"] = stats["trade_patterns"]["buy_orders"] / stats["trade_patterns"]["sell_orders"]
+    
+    # Détection early trusted
+    early_wallets = sorted(wallet_details, key=lambda w: w.get("entry_rank", float('inf')))[:10]
+    stats["trust_metrics"]["early_trusted_ratio"] = len([w for w in early_wallets if w["trust_score"] > 70]) / max(1, len(early_wallets))
+    
+    # NOUVEAU: Détection wallets sniper
+    stats["sniper_count"] = stats["wallet_categories"]["sniper"]
+    stats["sniper_ratio"] = stats["sniper_count"] / max(1, stats["total_wallets"])
+    
+    # Stocker détails pour référence
+    stats["wallet_details"] = wallet_details
+    
+    return stats
+```
+
+### 4.4 X-Score Engine Amélioré avec Pondération Smart Money
+
+```python
+def calculate_x_score(token, metrics, wallet_analysis, memory_of_trust):
+    """
+    Calcule le X-Score complet amélioré avec facteurs smart money et sniper
+    """
+    components = {}
+    
+    # 1. Qualité Token (20%)
+    token_quality = calculate_token_quality(token, metrics)
+    components["token_quality"] = token_quality * 0.20
+    
+    # 2. Wallet Quality (25%)
+    wallet_quality = calculate_wallet_quality(wallet_analysis)
+    components["wallet_quality"] = wallet_quality * 0.25
+    
+    # 3. Memory of Trust (20%)
+    trust_factor = calculate_trust_factor(token, wallet_analysis, memory_of_trust)
+    components["trust_factor"] = trust_factor * 0.20
+    
+    # 4. Market Dynamics (15%)
+    market_factor = calculate_market_dynamics(metrics)
+    components["market_factor"] = market_factor * 0.15
+    
+    # 5. Temporal Patterns (10%)
+    temporal_factor = calculate_temporal_patterns(token, metrics)
+    components["temporal_factor"] = temporal_factor * 0.10
+    
+    # 6. Reactivation Boost (10%)
+    reactivation_factor = calculate_reactivation_factor(token, metrics)
+    components["reactivation_factor"] = reactivation_factor * 0.10
+    
+    # NOUVEAU: Bonus Sniper Wallets
+    sniper_count = wallet_analysis.get("sniper_count", 0) 
+    sniper_bonus = 5 * min(1.0, sniper_count / 3)
+    components["sniper_bonus"] = sniper_bonus
+    
+    # NOUVEAU: Pondération price_change × smart_money_ratio
+    price_change = metrics.get("price_change_1h", 0)
+    smart_money_ratio = wallet_analysis.get("trust_metrics", {}).get("smart_money_ratio", 0)
+    
+    # Boost significatif si le prix augmente ET que les smart money sont présents
+    price_smart_boost = price_change * smart_money_ratio * 10
+    components["price_smart_boost"] = price_smart_boost
+    
+    # Score de base (somme des composantes)
+    base_score = sum(components.values())
+    
+    # Anti-Dump Check
+    anti_dump = check_anti_dump_pattern(token, wallet_analysis)
+    
+    # Application pénalité dump si détecté
+    final_score = base_score
+    if anti_dump["detected"]:
+        # Pénalité proportionnelle à la sévérité
+        dump_penalty = min(0.90, anti_dump["severity"] / 100)
+        final_score = base_score * (1.0 - dump_penalty)
+        components["anti_dump_penalty"] = -base_score * dump_penalty
+    
+    # Range final 0-100
+    final_score = max(0, min(100, final_score))
+    
+    return {
+        "token_address": token["address"],
+        "x_score": final_score,
+        "base_score": base_score,
+        "components": components,
+        "anti_dump": anti_dump,
+        "calculated_at": datetime.now()
+    }
+```
+
+---
+
+## 5. MEMORY OF TRUST NETWORK
+
+### 5.1 Structure de Données
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                     MEMORY OF TRUST                        │
+│                                                            │
+│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐   │
+│  │  WALLET       │  │ INTERACTION   │  │ TOKEN         │   │
+│  │  PROFILES     │  │ HISTORY       │  │ ASSOCIATIONS  │   │
+│  └───────┬───────┘  └──────┬────────┘  └───────┬───────┘   │
+│          │                 │                   │           │
+│          └─────────────────┼───────────────────┘           │
+│                            │                               │
+│                 ┌──────────▼─────────┐                     │
+│                 │                    │                     │
+│                 │    TRUST GRAPH     │                     │
+│                 │                    │                     │
+│                 └────────────────────┘                     │
+└────────────────────────────────────────────────────────────┘
+```
+
+### 5.2 Implémentation Robuste
+
+```python
+class MemoryOfTrust:
+    def __init__(self, db_connection, cache_client):
+        self.db = db_connection
+        self.cache = cache_client
+        self.trust_graph = self._load_trust_graph()
+    
+    def record_wallet_interaction(self, wallet_address, token_address, action_type, amount, price, success=None):
+        """
+        Enregistre une nouvelle interaction wallet-token
+        """
+        # Horodatage précis
+        timestamp = datetime.now()
+        
+        # Déterminer succès si non fourni (basé sur profit)
+        if success is None and action_type == "sell":
+            success = self._calculate_profit(wallet_address, token_address, price) > 0
+        
+        # Créer entrée historique
+        interaction = {
+            "wallet_address": wallet_address,
+            "token_address": token_address,
+            "action_type": action_type,
+            "amount_sol": amount,
+            "price": price,
+            "timestamp": timestamp,
+            "success": success
+        }
+        
+        # Stocker en DB
+        self.db.store_wallet_interaction(interaction)
+        
+        # Mettre à jour compte d'interactions
+        self._update_interaction_count(wallet_address, token_address, action_type)
+        
+        # Invalidation cache selective
+        self._invalidate_related_caches(wallet_address, token_address)
+        
+        # Mise à jour asynchrone des scores
+        self._schedule_trust_update(wallet_address)
+        
+        return True
+    
+    def get_wallet_trust_score(self, wallet_address):
+        """
+        Récupère le trust score d'un wallet (avec cache)
+        """
+        # Vérifier cache
+        cache_key = f"trust:wallet:{wallet_address}"
+        cached = self.cache.get(cache_key)
+        if cached is not None:
+            return cached
+        
+        # Récupérer score stocké
+        stored_score = self.db.get_wallet_trust_score(wallet_address)
+        if stored_score and stored_score["last_calculated_at"] > datetime.now() - timedelta(hours=24):
+            # Mettre en cache pour 1h
+            self.cache.set(cache_key, stored_score["trust_score"], 3600)
+            return stored_score["trust_score"]
+        
+        # Recalculer si ancien ou inexistant
+        trust_score = self._calculate_wallet_trust_score(wallet_address)
+        
+        # Mettre en cache
+        self.cache.set(cache_key, trust_score, 3600)
+        
+        return trust_score
+    
+    def get_token_trust_metrics(self, token_address):
+        """
+        Récupère les métriques de confiance pour un token
+        """
+        # Vérifier cache
+        cache_key = f"trust:token:{token_address}"
+        cached = self.cache.get(cache_key)
+        if cached is not None:
+            return cached
+        
+        # Récupérer wallets actifs sur ce token (avec pagination complète)
+        active_wallets = self._get_all_token_active_wallets(token_address)
+        
+        # Calculer métriques
+        metrics = {
+            "token_address": token_address,
+            "active_wallets": len(active_wallets),
+            "trusted_wallets": 0,
+            "avg_trust_score": 0,
+            "trust_score_distribution": {
+                "high": 0,    # >80
+                "medium": 0,  # 50-80
+                "low": 0      # <50
+            }
+        }
+        
+        # Calculer scores pour chaque wallet
+        if active_wallets:
+            total_score = 0
+            for wallet in active_wallets:
+                trust_score = self.get_wallet_trust_score(wallet["address"])
+                total_score += trust_score
+                
+                if trust_score >= 80:
+                    metrics["trust_score_distribution"]["high"] += 1
+                elif trust_score >= 50:
+                    metrics["trust_score_distribution"]["medium"] += 1
+                else:
+                    metrics["trust_score_distribution"]["low"] += 1
+                
+                if trust_score >= 70:
+                    metrics["trusted_wallets"] += 1
+            
+            metrics["avg_trust_score"] = total_score / len(active_wallets)
+        
+        # Calculer early trust ratio
+        early_wallets = self._get_early_wallets(token_address, limit=10)
+        if early_wallets:
+            early_trusted = sum(1 for w in early_wallets if self.get_wallet_trust_score(w["address"]) >= 70)
+            metrics["early_trust_ratio"] = early_trusted / len(early_wallets)
+        else:
+            metrics["early_trust_ratio"] = 0
+        
+        # Mettre en cache pour 15min
+        self.cache.set(cache_key, metrics, 900)
+        
+        return metrics
+        
+    def _get_all_token_active_wallets(self, token_address):
+        """
+        Récupère tous les wallets actifs pour un token avec pagination complète
+        """
+        all_wallets = []
+        next_token = None
+        
+        while True:
+            wallets_page, next_token = self.db.get_token_active_wallets(token_address, pagination_token=next_token)
+            all_wallets.extend(wallets_page)
+            
+            if not next_token:
+                break
+        
+        return all_wallets
+    
+    # Autres méthodes omises pour concision
+```
+
+### 5.3 Routines de Maintenance
+
+```python
+def maintain_memory_of_trust(memory, db):
+    """
+    Routine de maintenance périodique du Memory of Trust
+    """
+    # 1. Recalculer scores des wallets les plus actifs
+    active_wallets = db.get_most_active_wallets(days=7, limit=1000)
+    for wallet in active_wallets:
+        memory.get_wallet_trust_score(wallet["address"])  # Trigger recalcul
+    
+    # 2. Nettoyer les caches obsolètes
+    memory.clean_obsolete_caches()
+    
+    # 3. Regénérer le Trust Graph
+    memory.rebuild_trust_graph()
+    
+    # 4. Mettre à jour les proximités wallet-wallet
+    memory.update_wallet_similarities()
+    
+    # 5. Archiver les anciennes interactions (>90 jours)
+    db.archive_old_interactions(days=90)
+    
+    # 6. Optimiser les indexes de la base
+    db.optimize_indexes()
+    
+    # 7. Générer métriques système
+    stats = memory.generate_system_metrics()
+    
+    return stats
+```
+
+---
+
+## 6. ANTI-DUMP DETECTION SYSTEM
+
+### 6.1 Anti-Dump Pattern Detector
+
+```python
+def check_anti_dump_pattern(token, wallet_analysis):
+    """
+    Recherche des patterns de dump coordonnés
+    """
+    # Récupérer transactions récentes (24h)
+    transactions = get_token_recent_transactions(token["address"], hours=24)
+    if not transactions:
+        return {"detected": False, "severity": 0, "clusters": []}
+    
+    # Filtrer ventes uniquement
+    sell_transactions = [tx for tx in transactions if tx["action_type"] == "sell"]
+    
+    # Si peu de ventes, pas de pattern
+    if len(sell_transactions) < 5:
+        return {"detected": False, "severity": 0, "clusters": []}
+    
+    # Trier par timestamp
+    sell_transactions.sort(key=lambda tx: tx["timestamp"])
+    
+    # Détection clusters temporels (ventes rapprochées)
+    clusters = []
+    current_cluster = []
+    for i, tx in enumerate(sell_transactions):
+        if not current_cluster:
+            current_cluster.append(tx)
+            continue
+        
+        last_tx = current_cluster[-1]
+        time_diff = (tx["timestamp"] - last_tx["timestamp"]).total_seconds()
+        
+        # Si vente dans fenêtre 5min, ajouter au cluster
+        if time_diff <= 300:  # 5 minutes
+            current_cluster.append(tx)
+        else:
+            # Enregistrer cluster si significatif (3+ ventes)
+            if len(current_cluster) >= 3:
+                clusters.append(list(current_cluster))
+            current_cluster = [tx]
+    
+    # Ajouter dernier cluster si significatif
+    if len(current_cluster) >= 3:
+        clusters.append(current_cluster)
+    
+    # Si pas de clusters significatifs
+    if not clusters:
+        return {"detected": False, "severity": 0, "clusters": []}
+    
+    # Analyser chaque cluster
+    analyzed_clusters = []
+    highest_severity = 0
+    
+    for cluster in clusters:
+        # Extraire wallets vendeurs
+        wallets = [tx["wallet_address"] for tx in cluster]
+        unique_wallets = set(wallets)
+        
+        # Calculer volume total vendu
+        total_volume = sum(tx["amount_sol"] for tx in cluster)
+        
+        # Vérifier si wallets smart sont impliqués
+        wallet_details = wallet_analysis.get("wallet_details", [])
+        smart_wallets = [w for w in wallet_details if "smart" in w.get("categories", [])]
+        smart_addresses = {w["address"] for w in smart_wallets}
+        
+        smart_sellers = smart_addresses.intersection(unique_wallets)
+        smart_seller_count = len(smart_sellers)
+        
+        # Calculer gravité du cluster
+        if smart_seller_count > 0:
+            # Plus grave si wallets smart impliqués
+            severity = min(100, (smart_seller_count * 20) + (total_volume / 100))
+        else:
+            # Moins grave si wallets non smart
+            severity = min(60, (len(unique_wallets) * 10) + (total_volume / 200))
+        
+        # Marquer le cluster
+        cluster_info = {
+            "timestamp_start": cluster[0]["timestamp"],
+            "timestamp_end": cluster[-1]["timestamp"],
+            "duration_seconds": (cluster[-1]["timestamp"] - cluster[0]["timestamp"]).total_seconds(),
+            "transaction_count": len(cluster),
+            "unique_wallets": len(unique_wallets),
+            "smart_wallets": smart_seller_count,
+            "total_volume": total_volume,
+            "severity": severity
+        }
+        
+        analyzed_clusters.append(cluster_info)
+        highest_severity = max(highest_severity, severity)
+    
+    # Résultats finaux
+    return {
+        "detected": highest_severity >= 30,  # Seuil de détection
+        "severity": highest_severity,
+        "clusters": analyzed_clusters
+    }
+```
+
+### 6.2 Automatic Pattern Learning
+
+```python
+def train_anti_dump_detector(db, model_storage):
+    """
+    Entraîne le détecteur anti-dump sur les données historiques
+    """
+    # Récupérer exemples historiques de dumps confirmés
+    dump_examples = db.get_confirmed_dump_patterns()
+    
+    # Récupérer contre-exemples (non-dumps)
+    non_dump_examples = db.get_confirmed_non_dump_patterns()
+    
+    # Préparer features d'entraînement
+    X = []
+    y = []
+    
+    # Extraire features des dumps
+    for example in dump_examples:
+        features = extract_dump_features(example)
+        X.append(features)
+        y.append(1)  # Dump = 1
+    
+    # Extraire features des non-dumps
+    for example in non_dump_examples:
+        features = extract_dump_features(example)
+        X.append(features)
+        y.append(0)  # Non-dump = 0
+    
+    # Division train/test
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    
+    # Entraîner modèle
+    model = RandomForestClassifier(n_estimators=100)
+    model.fit(X_train, y_train)
+    
+    # Évaluer modèle
+    accuracy = model.score(X_test, y_test)
+    
+    # Métriques détaillées
+    y_pred = model.predict(X_test)
+    precision = precision_score(y_test, y_pred)
+    recall = recall_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred)
+    
+    # Importance des features
+    feature_importance = model.feature_importances_
+    
+    # Sauvegarder modèle
+    model_storage.save_model("anti_dump_detector", model)
+    
+    return {
+        "accuracy": accuracy,
+        "precision": precision,
+        "recall": recall,
+        "f1_score": f1,
+        "feature_importance": feature_importance,
+        "model_version": datetime.now()
+    }
+```
+
+---
+
+## 7. REACTIVATION MONITORING SYSTEM
+
+### 7.1 Architecture Dedicated Reactivation Detection
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                  REACTIVATION DETECTOR                     │
+│                                                            │
+│  ┌────────────────┐  ┌────────────────┐  ┌──────────────┐  │
+│  │                │  │                │  │              │  │
+│  │ DORMANT TOKEN  │  │  CHANGE        │  │  SMART WALLET│  │
+│  │ TRACKER        │  │  DETECTOR      │  │  RETURN      │  │
+│  │                │  │                │  │  DETECTOR    │  │
+│  └────────┬───────┘  └────────┬───────┘  └──────┬───────┘  │
+│           │                   │                 │          │
+│           └─────────┬─────────┘                 │          │
+│                     │                           │          │
+│                     ▼                           ▼          │
+│          ┌─────────────────────────┐  ┌─────────────────┐  │
+│          │                         │  │                 │  │
+│          │   REACTIVATION          │  │   MEMORY OF     │  │
+│          │   SCORING ENGINE        │  │   TRUST BOOST   │  │
+│          │                         │  │                 │  │
+│          └──────────┬──────────────┘  └─────────┬───────┘  │
+│                     │                           │          │
+│                     └────────────┬──────────────┘          │
+│                                  │                         │
+│                      ┌───────────▼────────────┐            │
+│                      │                        │            │
+│                      │  ALERT MANAGER         │            │
+│                      │                        │            │
+│                      └────────────────────────┘            │
+└────────────────────────────────────────────────────────────┘
+```
+
+### 7.2 Dormant Token Scanner avec Pagination
+
+```python
+def scan_dormant_tokens():
+    """
+    Scanne les tokens dormants pour détecter des signes de réactivation
+    """
+    # Récupérer tokens en SLEEP_MODE ou MONITORING_LIGHT
+    dormant_tokens = db.get_tokens_by_states(["SLEEP_MODE", "MONITORING_LIGHT"])
+    
+    reactivation_candidates = []
+    
+    for token in dormant_tokens:
+        # Récupérer métriques récentes
+        current_metrics = fetch_token_latest_metrics(token["address"])
+        
+        # Récupérer snapshot précédent pour comparaison
+        previous_metrics = db.get_token_last_snapshot(token["address"])
+        
+        if not previous_metrics:
+            continue
+        
+        # Calculer changements
+        changes = calculate_metric_changes(current_metrics, previous_metrics)
+        
+        # Vérifier retour de wallets smart
+        smart_returns = detect_smart_wallet_returns(token["address"], memory_of_trust)
+        
+        # Vérifier signes de réactivation
+        reactivation_score = calculate_reactivation_score(token, changes, smart_returns)
+        
+        # Si score suffisant, marquer comme candidat
+        if reactivation_score >= 60:
+            reactivation_candidates.append({
+                "token_address": token["address"],
+                "token_symbol": token["symbol"],
+                "reactivation_score": reactivation_score,
+                "changes": changes,
+                "smart_returns": smart_returns,
+                "current_metrics": current_metrics
+            })
+    
+    return reactivation_candidates
+```
+
+### 7.3 Smart Money Return Detection
+
+```python
+def detect_smart_wallet_returns(token_address, memory_of_trust):
+    """
+    Détecte le retour de wallets smart sur un token dormant
+    """
+    # Récupérer transactions récentes (48h)
+    recent_transactions = get_token_recent_transactions(token_address, hours=48)
+    
+    if not recent_transactions:
+        return {"detected": False, "wallets": []}
+    
+    # Filtrer achats uniquement
+    buy_transactions = [tx for tx in recent_transactions if tx["action_type"] == "buy"]
+    
+    # Extraire wallets acheteurs
+    buyer_addresses = set(tx["wallet_address"] for tx in buy_transactions)
+    
+    # Vérifier historique de ces wallets avec ce token
+    smart_returns = []
+    
+    for address in buyer_addresses:
+        # Vérifier si wallet est smart
+        trust_score = memory_of_trust.get_wallet_trust_score(address)
+        
+        if trust_score < 70:
+            continue  # Ignorer wallets non smart
+        
+        # Vérifier si wallet a un historique avec ce token
+        history = db.get_wallet_token_history(address, token_address)
+        
+        # Si wallet a vendu et revient (ré-achat)
+        if history and any(tx["action_type"] == "sell" for tx in history):
+            # Trouver dernière vente
+            last_sell = max((tx for tx in history if tx["action_type"] == "sell"), 
+                            key=lambda tx: tx["timestamp"])
+            
+            # Trouver premier achat récent
+            first_recent_buy = min((tx for tx in buy_transactions if tx["wallet_address"] == address), 
+                                   key=lambda tx: tx["timestamp"])
+            
+            # Si vente avant achat récent (retour confirmé)
+            if last_sell["timestamp"] < first_recent_buy["timestamp"]:
+                smart_returns.append({
+                    "wallet_address": address,
+                    "trust_score": trust_score,
+                    "last_sell_timestamp": last_sell["timestamp"],
+                    "return_timestamp": first_recent_buy["timestamp"],
+                    "dormant_period_hours": (first_recent_buy["timestamp"] - last_sell["timestamp"]).total_seconds() / 3600,
+                    "return_amount": first_recent_buy["amount_sol"]
+                })
+    
+    # Si retours significatifs détectés
+    return {
+        "detected": len(smart_returns) >= 2,  # Au moins 2 retours
+        "wallets": smart_returns,
+        "total_returning": len(smart_returns),
+        "avg_trust_score": sum(w["trust_score"] for w in smart_returns) / max(1, len(smart_returns)),
+        "total_return_volume": sum(w["return_amount"] for w in smart_returns)
+    }
+```
+
+### 7.4 Reactivation Scoring
+
+```python
+def calculate_reactivation_score(token, changes, smart_returns=None):
+    """
+    Calcule un score de réactivation basé sur les changements de métriques
+    et le retour éventuel de wallets smart
+    """
+    # Facteurs de réactivation
+    volume_factor = min(1.0, changes.get("volume_1h_change", 0) / 5.0)  # 5x max
+    price_factor = min(1.0, changes.get("price_change", 0) / 0.3)  # +30% max
+    holders_factor = min(1.0, changes.get("holder_growth", 0) / 0.1)  # +10% max
+    
+    # Base score from metrics
+    base_score = (
+        volume_factor * 0.5 +
+        price_factor * 0.3 +
+        holders_factor * 0.2
+    ) * 100
+    
+    # Bonus pour smart wallet returns
+    smart_wallet_bonus = 0
+    if smart_returns and smart_returns["detected"]:
+        # Bonus proportionnel au nombre de wallets qui reviennent
+        return_count_factor = min(1.0, smart_returns["total_returning"] / 5)  # Max pour 5 wallets
+        
+        # Bonus proportionnel à la qualité des wallets
+        trust_factor = smart_returns["avg_trust_score"] / 100
+        
+        # Bonus proportionnel au volume de retour
+        volume_factor = min(1.0, smart_returns["total_return_volume"] / 500)  # Max pour 500 SOL
+        
+        # Calcul bonus final
+        smart_wallet_bonus = (
+            return_count_factor * 0.5 +
+            trust_factor * 0.3 +
+            volume_factor * 0.2
+        ) * 30  # Max 30 points bonus
+    
+    # Score final
+    reactivation_score = base_score + smart_wallet_bonus
+    
+    # Limiter à 0-100
+    return max(0, min(100, reactivation_score))
+```
+
+---
+
+## 8. INFRASTRUCTURE TECHNIQUE
+
+### 8.1 Stack Technologique
+
+| Composant | Technologie | Justification |
+|-----------|-------------|---------------|
+| Core Services | Go | Performance, concurrence, faible empreinte mémoire |
+| Wallet Intelligence | Python + Pandas + NetworkX | Analyse données, graphes, ML |
+| Database | PostgreSQL + TimescaleDB | Time-series, JSONB, indexation avancée |
+| Message Broker | Redis Streams + Consumer Groups | Fiabilité, scaling, idempotence |
+| Cache | Redis | Performance, structures de données avancées |
+| API Gateway | Go (Fiber) | Efficacité, middleware support |
+| Monitoring | Prometheus + Grafana | Visualisation temps réel, alertes |
+| Deployment | Docker + Docker Compose | Portabilité, orchestration simple |
+
+### 8.2 Architecture Backend
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   API GATEWAY LAYER                         │
+└───────────┬───────────────────────────────┬─────────────────┘
+            │                               │
+┌───────────▼───────────┐       ┌───────────▼───────────┐
+│                       │       │                       │
+│  PUBLIC API ENDPOINTS │       │   ADMIN DASHBOARD    │
+│                       │       │                       │
+└───────────┬───────────┘       └───────────┬───────────┘
+            │                               │
+            └───────────────┬───────────────┘
+                            │
+┌───────────────────────────▼───────────────────────────────┐
+│                   SERVICE LAYER                           │
+│                                                           │
+│   ┌─────────────┐   ┌─────────────┐   ┌─────────────┐     │
+│   │             │   │             │   │             │     │
+│   │ TOKEN       │   │ WALLET      │   │ ANALYSIS    │     │
+│   │ SERVICE     │   │ SERVICE     │   │ SERVICE     │     │
+│   │             │   │             │   │             │     │
+│   └─────────────┘   └─────────────┘   └─────────────┘     │
+│                                                           │
+└───────────────────────────┬───────────────────────────────┘
+                            │
+┌───────────────────────────▼───────────────────────────────┐
+│                   DATA LAYER                              │
+│                                                           │
+│   ┌─────────────┐   ┌─────────────┐   ┌─────────────┐     │
+│   │             │   │             │   │             │     │
+│   │ REDIS       │   │ POSTGRESQL  │   │ TIMESCALEDB │     │
+│   │ STREAMS     │   │ STORAGE     │   │ METRICS     │     │
+│   │             │   │             │   │             │     │
+│   └─────────────┘   └─────────────┘   └─────────────┘     │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+```
+
+### 8.3 Redis Consumer Groups Pipeline
+
+```go
+// Redis Consumer Groups Configuration
+type ConsumerConfig struct {
+    RedisURL        string
+    StreamName      string
+    GroupName       string
+    ConsumerName    string
+    BatchSize       int
+    PollingInterval time.Duration
+    MaxRetries      int
+    RetryDelay      time.Duration
+    DLQStream       string
+}
+
+// Consumer Group Worker
+type ConsumerGroupWorker struct {
+    config        ConsumerConfig
+    redisClient   *redis.Client
+    messageHandler MessageHandler
+    stopCh        chan struct{}
+    wg            sync.WaitGroup
+    logger        *zap.Logger
+}
+
+// Initialisation Worker
+func NewConsumerGroupWorker(config ConsumerConfig, handler MessageHandler) (*ConsumerGroupWorker, error) {
+    // Valider configuration
+    if config.StreamName == "" || config.GroupName == "" {
+        return nil, errors.New("stream name and group name must be provided")
+    }
+    
+    // Connexion Redis
+    redisOpts, err := redis.ParseURL(config.RedisURL)
+    if err != nil {
+        return nil, fmt.Errorf("invalid Redis URL: %w", err)
+    }
+    
+    redisClient := redis.NewClient(redisOpts)
+    
+    // Logger
+    logger, _ := zap.NewProduction()
+    
+    worker := &ConsumerGroupWorker{
+        config:        config,
+        redisClient:   redisClient,
+        messageHandler: handler,
+        stopCh:        make(chan struct{}),
+        logger:        logger,
+    }
+    
+    return worker, nil
+}
+
+// Démarrage Worker
+func (w *ConsumerGroupWorker) Start() error {
+    // Créer consumer group si n'existe pas
+    err := w.createConsumerGroupIfNotExists()
+    if err != nil && !strings.Contains(err.Error(), "BUSYGROUP") {
+        return fmt.Errorf("failed to create consumer group: %w", err)
+    }
+    
+    w.logger.Info("Starting consumer group worker",
+        zap.String("stream", w.config.StreamName),
+        zap.String("group", w.config.GroupName),
+        zap.String("consumer", w.config.ConsumerName))
+    
+    w.wg.Add(1)
+    go func() {
+        defer w.wg.Done()
+        w.processMessages()
+    }()
+    
+    // Démarrer processus de gestion des messages en échec
+    w.wg.Add(1)
+    go func() {
+        defer w.wg.Done()
+        w.retryPendingMessages()
+    }()
+    
+    return nil
+}
+
+// Traitement des messages
+func (w *ConsumerGroupWorker) processMessages() {
+    for {
+        select {
+        case <-w.stopCh:
+            w.logger.Info("Stopping message processing")
+            return
+        default:
+            // Lire messages du stream
+            messages, err := w.redisClient.XReadGroup(&redis.XReadGroupArgs{
+                Group:    w.config.GroupName,
+                Consumer: w.config.ConsumerName,
+                Streams:  []string{w.config.StreamName, ">"},
+                Count:    int64(w.config.BatchSize),
+                Block:    w.config.PollingInterval,
+            }).Result()
+            
+            if err != nil {
+                if err != redis.Nil {
+                    w.logger.Error("Failed to read from stream",
+                        zap.Error(err),
+                        zap.String("stream", w.config.StreamName))
+                    time.Sleep(w.config.RetryDelay)
+                }
+                continue
+            }
+            
+            // Traiter les messages
+            for _, stream := range messages {
+                for _, message := range stream.Messages {
+                    w.processMessage(message)
+                }
+            }
+        }
+    }
+}
+
+// Traitement individuel des messages
+func (w *ConsumerGroupWorker) processMessage(message redis.XMessage) {
+    w.logger.Debug("Processing message", 
+        zap.String("id", message.ID),
+        zap.Any("values", message.Values))
+    
+    // Convertir message
+    parsedMessage, err := parseMessage(message.Values)
+    if err != nil {
+        w.logger.Error("Failed to parse message", 
+            zap.Error(err), 
+            zap.String("id", message.ID))
+        
+        // Stocker en DLQ et ack
+        w.moveToDeadLetterQueue(message)
+        return
+    }
+    
+    // Traiter avec handler
+    err = w.messageHandler(parsedMessage)
+    
+    if err != nil {
+        w.logger.Error("Failed to process message", 
+            zap.Error(err), 
+            zap.String("id", message.ID))
+        
+        // Ne pas ack - sera retry automatiquement
+        return
+    }
+    
+    // Acknowledger si succès
+    err = w.redisClient.XAck(w.config.StreamName, w.config.GroupName, message.ID).Err()
+    if err != nil {
+        w.logger.Error("Failed to acknowledge message", 
+            zap.Error(err), 
+            zap.String("id", message.ID))
+    }
+}
+
+// Reprise des messages en échec
+func (w *ConsumerGroupWorker) retryPendingMessages() {
+    ticker := time.NewTicker(w.config.RetryDelay)
+    defer ticker.Stop()
+    
+    for {
+        select {
+        case <-w.stopCh:
+            w.logger.Info("Stopping pending message retry")
+            return
+        case <-ticker.C:
+            // Récupérer messages en attente
+            pendingMessages, err := w.redisClient.XPendingExt(&redis.XPendingExtArgs{
+                Stream:   w.config.StreamName,
+                Group:    w.config.GroupName,
+                Start:    "-",
+                End:      "+",
+                Count:    int64(w.config.BatchSize),
+                Consumer: w.config.ConsumerName,
+            }).Result()
+            
+            if err != nil {
+                w.logger.Error("Failed to get pending messages", zap.Error(err))
+                continue
+            }
+            
+            for _, pending := range pendingMessages {
+                // Vérifier dépassement retries
+                if pending.RetryCount > int64(w.config.MaxRetries) {
+                    w.logger.Warn("Message exceeded max retries, moving to DLQ", 
+                        zap.String("id", pending.ID),
+                        zap.Int64("retryCount", pending.RetryCount))
+                    
+                    // Récupérer message
+                    messages, err := w.redisClient.XRange(w.config.StreamName, pending.ID, pending.ID).Result()
+                    if err != nil || len(messages) == 0 {
+                        w.logger.Error("Failed to retrieve pending message", zap.Error(err))
+                        continue
+                    }
+                    
+                    // Déplacer en DLQ
+                    w.moveToDeadLetterQueue(messages[0])
+                    continue
+                }
+                
+                // Réclamer message pour retry
+                err := w.redisClient.XClaim(&redis.XClaimArgs{
+                    Stream:   w.config.StreamName,
+                    Group:    w.config.GroupName,
+                    Consumer: w.config.ConsumerName,
+                    MinIdle:  w.config.RetryDelay,
+                    Messages: []string{pending.ID},
+                }).Err()
+                
+                if err != nil {
+                    w.logger.Error("Failed to claim pending message", 
+                        zap.Error(err), 
+                        zap.String("id", pending.ID))
+                    continue
+                }
+                
+                // Récupérer le message
+                messages, err := w.redisClient.XRange(w.config.StreamName, pending.ID, pending.ID).Result()
+                if err != nil || len(messages) == 0 {
+                    w.logger.Error("Failed to retrieve claimed message", zap.Error(err))
+                    continue
+                }
+                
+                // Retraiter
+                w.processMessage(messages[0])
+            }
+        }
+    }
+}
+```
+
+### 8.4 High-Performance Token Metrics Store
+
+```sql
+-- Hypertable pour métriques token haute-performance
+CREATE TABLE token_metrics (
+    token_address TEXT NOT NULL,
+    timestamp TIMESTAMPTZ NOT NULL,
+    price_sol NUMERIC,
+    price_usd NUMERIC,
+    market_cap_usd NUMERIC,
+    volume_1h NUMERIC,
+    volume_24h NUMERIC,
+    holder_count INTEGER,
+    buy_count_1h INTEGER,
+    sell_count_1h INTEGER,
+    buy_sell_ratio NUMERIC GENERATED ALWAYS AS (
+        CASE WHEN sell_count_1h > 0 THEN buy_count_1h::numeric / sell_count_1h ELSE NULL END
+    ) STORED,
+    price_change_1h NUMERIC,
+    holder_growth_1h NUMERIC,
+    wallet_metrics JSONB,
+    x_score NUMERIC,
+    lifecycle_state TEXT,
+    -- Nouveaux champs pour optimisations
+    volume_mcap_ratio NUMERIC GENERATED ALWAYS AS (
+        CASE WHEN market_cap_usd > 0 THEN volume_1h::numeric / market_cap_usd ELSE NULL END
+    ) STORED,
+    smart_money_ratio NUMERIC,
+    sniper_count INTEGER
+);
+
+-- Convertir en hypertable
+SELECT create_hypertable('token_metrics', 'timestamp', chunk_time_interval => INTERVAL '1 hour');
+
+-- Index pour requêtes efficaces
+CREATE INDEX idx_token_metrics_token_time ON token_metrics(token_address, timestamp DESC);
+CREATE INDEX idx_token_metrics_x_score ON token_metrics(x_score DESC, timestamp DESC);
+CREATE INDEX idx_token_metrics_volume ON token_metrics(volume_1h DESC, timestamp DESC);
+CREATE INDEX idx_token_metrics_volume_mcap_ratio ON token_metrics(volume_mcap_ratio ASC, timestamp DESC);
+
+-- Compression automatique
+ALTER TABLE token_metrics SET (
+    timescaledb.compress,
+    timescaledb.compress_segmentby = 'token_address',
+    timescaledb.compress_orderby = 'timestamp DESC'
+);
+
+-- Politique compression (données > 7 jours)
+SELECT add_compression_policy('token_metrics', INTERVAL '7 days');
+
+-- Vue matérialisée pour analyse tendance
+CREATE MATERIALIZED VIEW token_daily_summary AS
+SELECT 
+    token_address,
+    DATE_TRUNC('day', timestamp) AS day,
+    MAX(x_score) AS max_x_score,
+    AVG(price_usd) AS avg_price,
+    MAX(market_cap_usd) AS max_market_cap,
+    SUM(volume_1h) AS total_volume,
+    MAX(holder_count) AS max_holders,
+    AVG(buy_sell_ratio) AS avg_buy_sell_ratio,
+    AVG(volume_mcap_ratio) AS avg_volume_mcap_ratio,
+    MAX(smart_money_ratio) AS max_smart_money_ratio,
+    MAX(sniper_count) AS max_sniper_count
+FROM token_metrics
+GROUP BY token_address, DATE_TRUNC('day', timestamp);
+
+-- Index sur vue
+CREATE INDEX idx_token_daily_token ON token_daily_summary(token_address, day DESC);
+CREATE INDEX idx_token_daily_volume ON token_daily_summary(total_volume DESC, day DESC);
+
+-- Continuous aggregate pour analyses rapides sur données historiques
+SELECT add_continuous_aggregate_policy('token_daily_summary',
+    start_offset => INTERVAL '30 days',
+    end_offset => INTERVAL '1 hour',
+    schedule_interval => INTERVAL '1 hour');
+```
+
+### 8.5 Client GMGN Optimisé avec Pagination
+
+```go
+// Client GMGN avec support complet de pagination
+type GMGNClient struct {
+    BaseURL        string
+    APIKey         string
+    HTTPClient     *http.Client
+    RateLimitDelay time.Duration
+    Logger         *zap.Logger
+}
+
+// Creates new GMGN API client
+func NewGMGNClient(baseURL, apiKey string, rateLimitPerMinute int) *GMGNClient {
+    delay := time.Minute / time.Duration(rateLimitPerMinute)
+    if delay < 50*time.Millisecond {
+        delay = 50 * time.Millisecond // Minimum 50ms entre requêtes
+    }
+    
+    logger, _ := zap.NewProduction()
+    
+    return &GMGNClient{
+        BaseURL:        baseURL,
+        APIKey:         apiKey,
+        HTTPClient:     &http.Client{Timeout: 10 * time.Second},
+        RateLimitDelay: delay,
+        Logger:         logger,
+    }
+}
+
+// GetAllWalletHoldings récupère tous les holdings d'un wallet avec pagination
+func (c *GMGNClient) GetAllWalletHoldings(walletAddress string) ([]model.Holding, error) {
+    var allHoldings []model.Holding
+    nextToken := ""
+    
+    for {
+        // Construire URL avec pagination
+        url := fmt.Sprintf("%s/api/v1/wallet_holdings/sol/%s", c.BaseURL, walletAddress)
+        if nextToken != "" {
+            url = fmt.Sprintf("%s?next=%s", url, nextToken)
+        }
+        
+        // Effectuer requête
+        response, err := c.makeRequest("GET", url, nil)
+        if err != nil {
+            return nil, fmt.Errorf("failed to get wallet holdings: %w", err)
+        }
+        
+        // Parser réponse
+        var holdingsResponse model.WalletHoldingsResponse
+        if err := json.Unmarshal(response, &holdingsResponse); err != nil {
+            return nil, fmt.Errorf("failed to parse holdings response: %w", err)
+        }
+        
+        // Ajouter holdings à la liste complète
+        allHoldings = append(allHoldings, holdingsResponse.Data.Holdings...)
+        
+        // Vérifier si plus de pages
+        if holdingsResponse.Data.Next == "" {
+            break
+        }
+        
+        // Préparer pour la prochaine page
+        nextToken = holdingsResponse.Data.Next
+        
+        // Respecter rate limit
+        time.Sleep(c.RateLimitDelay)
+    }
+    
+    return allHoldings, nil
+}
+
+// GetAllTokenTraders récupère tous les traders d'un token avec pagination
+func (c *GMGNClient) GetAllTokenTraders(tokenAddress string) ([]model.Trader, error) {
+    var allTraders []model.Trader
+    nextToken := ""
+    
+    for {
+        // Construire URL avec pagination
+        url := fmt.Sprintf("%s/vas/api/v1/token_traders/sol/%s", c.BaseURL, tokenAddress)
+        if nextToken != "" {
+            url = fmt.Sprintf("%s?next=%s", url, nextToken)
+        }
+        
+        // Effectuer requête
+        response, err := c.makeRequest("GET", url, nil)
+        if err != nil {
+            return nil, fmt.Errorf("failed to get token traders: %w", err)
+        }
+        
+        // Parser réponse
+        var tradersResponse model.TokenTradersResponse
+        if err := json.Unmarshal(response, &tradersResponse); err != nil {
+            return nil, fmt.Errorf("failed to parse traders response: %w", err)
+        }
+        
+        // Ajouter traders à la liste complète
+        allTraders = append(allTraders, tradersResponse.Data.List...)
+        
+        // Vérifier si plus de pages
+        if tradersResponse.Data.Next == "" {
+            break
+        }
+        
+        // Préparer pour la prochaine page
+        nextToken = tradersResponse.Data.Next
+        
+        // Respecter rate limit
+        time.Sleep(c.RateLimitDelay)
+    }
+    
+    return allTraders, nil
+}
+
+// GetAllTokenTrades récupère toutes les transactions d'un token avec pagination
+func (c *GMGNClient) GetAllTokenTrades(tokenAddress string, limit int) ([]model.Trade, error) {
+    var allTrades []model.Trade
+    nextToken := ""
+    
+    // Limiter le nombre total de trades à récupérer
+    maxTrades := limit
+    if maxTrades <= 0 {
+        maxTrades = 1000 // Valeur par défaut
+    }
+    
+    for len(allTrades) < maxTrades {
+        // Construire URL avec pagination
+        url := fmt.Sprintf("%s/vas/api/v1/token_trades/sol/%s", c.BaseURL, tokenAddress)
+        if nextToken != "" {
+            url = fmt.Sprintf("%s?next=%s", url, nextToken)
+        }
+        
+        // Effectuer requête
+        response, err := c.makeRequest("GET", url, nil)
+        if err != nil {
+            return nil, fmt.Errorf("failed to get token trades: %w", err)
+        }
+        
+        // Parser réponse
+        var tradesResponse model.TokenTradesResponse
+        if err := json.Unmarshal(response, &tradesResponse); err != nil {
+            return nil, fmt.Errorf("failed to parse trades response: %w", err)
+        }
+        
+        // Ajouter trades à la liste complète
+        allTrades = append(allTrades, tradesResponse.Data.History...)
+        
+        // Vérifier si plus de pages ou si on a atteint la limite
+        if tradesResponse.Data.Next == "" || len(allTrades) >= maxTrades {
+            break
+        }
+        
+        // Préparer pour la prochaine page
+        nextToken = tradesResponse.Data.Next
+        
+        // Respecter rate limit
+        time.Sleep(c.RateLimitDelay)
+    }
+    
+    // Limiter au nombre exact demandé
+    if len(allTrades) > maxTrades {
+        allTrades = allTrades[:maxTrades]
+    }
+    
+    return allTrades, nil
+}
+
+// Méthode utilitaire pour effectuer les requêtes HTTP
+func (c *GMGNClient) makeRequest(method, url string, body io.Reader) ([]byte, error) {
+    req, err := http.NewRequest(method, url, body)
+    if err != nil {
+        return nil, err
+    }
+    
+    req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.APIKey))
+    req.Header.Set("Content-Type", "application/json")
+    
+    resp, err := c.HTTPClient.Do(req)
+    if err != nil {
+        return nil, err
+    }
+    defer resp.Body.Close()
+    
+    // Gestion des erreurs HTTP
+    if resp.StatusCode != http.StatusOK {
+        respBody, _ := io.ReadAll(resp.Body)
+        c.Logger.Error("GMGN API error",
+            zap.Int("status", resp.StatusCode),
+            zap.String("url", url),
+            zap.String("response", string(respBody)))
+        
+        return nil, fmt.Errorf("API error: %d - %s", resp.StatusCode, string(respBody))
+    }
+    
+    return io.ReadAll(resp.Body)
+}
+```
+
+---
+
+## 9. ROADMAP D'IMPLÉMENTATION
+
+### Phase 1: Architecture & Infrastructure (Semaine 1)
+- Setup repo et environment Docker
+- GMGN Gateway avec caching adaptatif et pagination complète
+- Schéma base de données (PostgreSQL + TimescaleDB)
+- Redis Streams + Consumer Groups
+- Pipeline core data processing
+
+### Phase 2: Detection Engine Amélioré (Semaine 2)
+- Token Lifecycle Management
+- Wallet Intelligence (avec support sniper)
+- Filtrage optimisé (ajout ratio volume/mcap)
+- X-Score avec améliorations smart money
+- Anti-Dump Detection
+- Pipeline notifications
+
+### Phase 3: Intelligence Avancée (Semaine 3)
+- Memory of Trust Core
+- Trust Network
+- Wallet clustering avancé
+- X-Score enrichi final
+- Dashboard v1
+
+### Phase 4: Reactivation System (Semaine 4)
+- Dormant Token Tracking
+- Reactivation Detection
+- Smart Wallet Return Analysis
+- Long-term TTL Management
+- Dashboard v2 avec Reactivation Alerts
+
+### Phase 5: Optimisations & Production (Semaine 5)
+- Performance tuning
+- Scaling tests
+- Security hardening
+- API Gateway complete
+- Documentation
+- Déploiement production
+
+### Phase 6: Évolutions Post-Launch
+- Auto-learning Memory of Trust
+- Predictive Analytics
+- Backtesting Framework
+- API étendue
+- Integration bots trading
+
+---
+
+## 10. MÉTRIQUES ET MONITORING
+
+### 10.1 System Monitoring
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                       SYSTEM HEALTH                        │
+│                                                            │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
+│  │  API        │  │  REDIS      │  │  DATABASE   │         │
+│  │  METRICS    │  │  METRICS    │  │  METRICS    │         │
+│  └─────────────┘  └─────────────┘  └─────────────┘         │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│                     TOKEN INSIGHTS                         │
+│                                                            │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
+│  │  ACTIVE     │  │  TOKEN      │  │  MEMORY OF  │         │
+│  │  TOKENS     │  │  METRICS    │  │  TRUST      │         │
+│  └─────────────┘  └─────────────┘  └─────────────┘         │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│                    DETECTION PERFORMANCE                   │
+│                                                            │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
+│  │  TOKEN      │  │  REACTIVATION│  │  MISSED     │         │
+│  │  DETECTION  │  │  STATS      │  │  OPPORTUNITIES │      │
+│  └─────────────┘  └─────────────┘  └─────────────┘         │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+### 10.2 Key Performance Indicators
+
+| KPI | Description | Cible |
+|-----|-------------|-------|
+| Total Detection Rate | % tokens >$1M détectés | >85% |
+| Early Detection Rate | % tokens détectés <30min après completion | >80% |
+| Reactivation Detection | % tokens réactivés détectés | >75% |
+| False Positive Rate | % alertes sans traction significative | <10% |
+| Memory of Trust Accuracy | Précision prédictive wallets | >90% |
+| Anti-Dump Detection | % patterns dump détectés correctement | >85% |
+| Smart Money Ratio | Présence smart wallets dans portfolio | >30% |
+
+### 10.3 Alert System
+
+Hiérarchie d'alertes intelligente:
+
+| Niveau | Déclencheur | Action |
+|--------|-------------|--------|
+| INFO | Token classé VALIDATED | Log + UI Update |
+| ALERT | Token classé HYPED | Notification + Sound |
+| URGENT | Token HYPED + Trust Factor élevé | Push + SMS |
+| CRITICAL | Multiple smart wallets entrent simultanément | Push + SMS + Telegram |
+| REACTIVATION | Token dormant réactivé avec smart wallets | Notification spéciale |
+| DANGER | Anti-Dump détecté sur token suivi | Alerte rouge immédiate |
+
+---
+
+## 11. ARBORESCENCE DU CODE
+
+```
+crypto-oracle/
+├── cmd/
+│   └── oracle/                    # Point d'entrée principal
+│       ├── main.go                # Initialisation des composants 
+│       └── startup.go             # Séquence de démarrage et config
+│
+├── internal/                      # Code privé de l'application
+│   ├── api/                       # API Gateway
+│   │   ├── server.go              # Configuration serveur HTTP
+│   │   ├── middleware.go          # Middlewares API et rate limiting
+│   │   ├── routes.go              # Définition des routes 
+│   │   └── handlers/              # Handlers des endpoints API
+│   │
+│   ├── token/                     # Token Engine
+│   │   ├── engine.go              # Core token engine
+│   │   ├── lifecycle.go           # Gestion du cycle de vie et TTL
+│   │   ├── filtration/            # Système de filtrage amélioré
+│   │   │   ├── filter.go          # Interface filtres
+│   │   │   ├── quality_filter.go  # Filtres de qualité
+│   │   │   ├── volume_filter.go   # Filtre volume/market cap ratio
+│   │   │   └── wallet_filter.go   # Filtres basés sur wallets
+│   │   ├── detection.go           # Détection patterns et signaux 
+│   │   └── scoring/               # X-Score avec améliorations
+│   │       ├── core.go            # Calcul X-Score de base
+│   │       ├── components.go      # Composants individuels du score
+│   │       └── boosters.go        # Boosters spécifiques (sniper, smart money)
+│   │
+│   ├── wallet/                    # Wallet Intelligence
+│   │   ├── intelligence.go        # Analyse et catégorisation wallets
+│   │   ├── profiling.go           # Profiling comportements wallets
+│   │   ├── sniper_detection.go    # Détection wallets sniper améliorée
+│   │   ├── smart_money.go         # Analyse et pondération smart money
+│   │   └── antidump.go            # Détection anti-dump patterns
+│   │
+│   ├── memory/                    # Memory of Trust
+│   │   ├── trust.go               # Core Memory of Trust
+│   │   ├── network.go             # Trust Network et graphes
+│   │   ├── storage.go             # Persistance des données trust
+│   │   └── calculator.go          # Calcul scores de confiance
+│   │
+│   ├── reactivation/              # Reactivation System
+│   │   ├── detector.go            # Détection réactivation tokens
+│   │   ├── metrics.go             # Mesures de réactivation
+│   │   ├── smart_return.go        # Détection retour wallets smart
+│   │   └── scoring.go             # Scoring réactivation
+│   │
+│   ├── gateway/                   # GMGN Gateway
+│   │   ├── client.go              # Client API GMGN optimisé
+│   │   ├── cache.go               # Stratégies de cache 
+│   │   ├── pagination.go          # Gestion optimisée pagination
+│   │   └── endpoints/             # Wrapper endpoints GMGN
+│   │
+│   ├── pipeline/                  # Stream Processing
+│   │   ├── consumer.go            # Consumer Groups Redis
+│   │   ├── producer.go            # Producer Stream Redis
+│   │   ├── handlers/              # Handlers de messages spécifiques
+│   │   └── workers.go             # Worker Pool management
+│   │
+│   ├── alerting/                  # Alert System
+│   │   ├── manager.go             # Gestion alertes
+│   │   ├── channels/              # Multi-canal notifications
+│   │   ├── templates/             # Templates alertes
+│   │   └── rules.go               # Règles de déclenchement alertes
+│   │
+│   └── storage/                   # Persistence Layer
+│       ├── db/                    # Database layer
+│       │   ├── connection.go      # DB Connection/Pool management
+│       │   └── migrations.go      # Gestion migrations
+│       ├── timescale/             # TimescaleDB pour time-series
+│       │   ├── repository.go      # Interface repository
+│       │   └── token_metrics.go   # Métriques temporelles tokens
+│       └── cache/                 # Redis cache
+│           ├── client.go          # Client Redis
+│           └── token_cache.go     # Cache données token
+│
+├── pkg/                           # Code potentiellement réutilisable
+│   ├── utils/                     # Utilitaires génériques
+│   │   ├── config/                # Gestion configuration
+│   │   ├── logger/                # Logging system
+│   │   └── metrics/               # Métriques performance
+│   │
+│   ├── gmgn/                      # Client GMGN réutilisable
+│   │   ├── client.go              # Client GMGN de base
+│   │   ├── pagination.go          # Support pagination optimisé
+│   │   └── models.go              # Modèles données GMGN
+│   │
+│   └── models/                    # Modèles de données
+│       ├── token.go               # Token models
+│       ├── wallet.go              # Wallet models
+│       └── transaction.go         # Transaction models
+│
+├── web/                           # Dashboard Web
+│   ├── assets/                    # Static assets
+│   ├── templates/                 # HTML templates
+│   └── dashboard.go               # Dashboard routing
+│
+├── scripts/                       # Scripts utilitaires
+│   ├── setup/                     # Scripts installation
+│   ├── db/                        # Scripts DB
+│   └── monitoring/                # Scripts monitoring
+│
+├── deployments/                   # Configuration déploiement
+│   ├── docker/                    # Configuration Docker
+│   ├── kubernetes/                # Configuration Kubernetes
+│   └── configs/                   # Configs par environnement
+│
+├── tests/                         # Tests
+│   ├── unit/                      # Tests unitaires
+│   ├── integration/               # Tests intégration
+│   └── utils/                     # Utils pour tests
+│
+├── docs/                          # Documentation
+│   ├── api/                       # Documentation API
+│   ├── architecture/              # Documentation architecture
+│   └── operations/                # Documentation opérationnelle
+│
+├── go.mod                         # Go module definition
+├── go.sum                         # Go dependencies checksum
+└── README.md                      # Documentation principale
+```
+
+---
+
+**© 2025 Crypto Oracle Memecoin Detector v4.2**

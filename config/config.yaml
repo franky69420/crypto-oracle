@@ -1,0 +1,66 @@
+# Configuration générale
+log_level: info
+
+# Configuration de la base de données
+database:
+  host: localhost
+  port: 5432
+  user: crypto_oracle
+  password: crypto_oracle_pass
+  dbname: crypto_oracle
+
+# Configuration Redis
+redis:
+  host: localhost
+  port: 6379
+  password: ""
+  db: 0
+
+# Configuration API
+api:
+  host: 0.0.0.0
+  port: 8080
+
+# Configuration GMGN Gateway
+gmgn:
+  base_url: https://gmgn.ai
+  device_id: web
+  client_id: web
+  from_app: web
+  app_ver: 1.0.0
+  tz_name: Europe/Paris
+  tz_offset: 3600
+  app_lang: fr
+  request_timeout: 30
+  rate_limit_delay: 2000
+
+# Configuration du pipeline de détection
+pipeline:
+  workers: 5
+  batch_size: 100
+  interval: 60
+
+# Configuration du système de réactivation
+reactivation:
+  monitoring_interval: 3600
+  retention_period: 604800
+
+# Configuration Memory of Trust
+memory:
+  trust_threshold: 0.7
+  decay_rate: 0.01
+  max_entries: 10000
+
+# Configuration des alertes
+alerts:
+  channels:
+    - type: telegram
+      token: YOUR_TELEGRAM_BOT_TOKEN
+      chat_id: YOUR_TELEGRAM_CHAT_ID
+    - type: webhook
+      url: http://localhost:8081/webhook
+  levels:
+    critical: true
+    high: true
+    medium: true
+    low: false 
