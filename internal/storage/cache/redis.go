@@ -2,6 +2,7 @@ package cache
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -111,10 +112,27 @@ func (r *Redis) PurgePattern(pattern string) error {
 
 // XAdd ajoute un message à un stream
 func (r *Redis) XAdd(stream string, values map[string]interface{}) error {
+	// Convertir les valeurs complexes en string JSON
+	processedValues := make(map[string]interface{})
+	for k, v := range values {
+		switch val := v.(type) {
+		case map[string]interface{}, []interface{}:
+			// Sérialiser les structures complexes en JSON
+			jsonBytes, err := json.Marshal(val)
+			if err != nil {
+				return fmt.Errorf("marshaling error: %w", err)
+			}
+			processedValues[k] = string(jsonBytes)
+		default:
+			// Garder les valeurs simples telles quelles
+			processedValues[k] = val
+		}
+	}
+
 	return r.client.XAdd(r.ctx, &redis.XAddArgs{
 		Stream: stream,
 		ID:     "*", // Auto-generate ID
-		Values: values,
+		Values: processedValues,
 	}).Err()
 }
 

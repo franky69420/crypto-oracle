@@ -316,11 +316,28 @@ func (c *Client) SetInt(key string, value int, expiration time.Duration) error {
 
 // XAdd ajoute un message à un stream Redis
 func (c *Client) XAdd(stream string, values map[string]interface{}) error {
+	// Convertir les valeurs complexes en string JSON
+	processedValues := make(map[string]interface{})
+	for k, v := range values {
+		switch val := v.(type) {
+		case map[string]interface{}, []interface{}:
+			// Sérialiser les structures complexes en JSON
+			jsonBytes, err := json.Marshal(val)
+			if err != nil {
+				return fmt.Errorf("marshaling error: %w", err)
+			}
+			processedValues[k] = string(jsonBytes)
+		default:
+			// Garder les valeurs simples telles quelles
+			processedValues[k] = val
+		}
+	}
+
 	// Convertir les valeurs en Args compatibles avec go-redis
-	args := make([]interface{}, 0, len(values)*2+3)
+	args := make([]interface{}, 0, len(processedValues)*2+3)
 	args = append(args, "XADD", stream, "*") // "*" génère un ID automatique
 
-	for k, v := range values {
+	for k, v := range processedValues {
 		args = append(args, k, v)
 	}
 
