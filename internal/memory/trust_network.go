@@ -6,10 +6,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/franko/crypto-oracle/internal/storage/cache"
-	"github.com/franko/crypto-oracle/internal/storage/db"
-	"github.com/franko/crypto-oracle/pkg/models"
-	"github.com/franko/crypto-oracle/pkg/utils/logger"
+	"github.com/franky69420/crypto-oracle/internal/storage/cache"
+	"github.com/franky69420/crypto-oracle/internal/storage/db"
+	"github.com/franky69420/crypto-oracle/pkg/models"
+	"github.com/franky69420/crypto-oracle/pkg/utils/logger"
 )
 
 // Vérification statique que TrustNetwork implémente l'interface MemoryOfTrust

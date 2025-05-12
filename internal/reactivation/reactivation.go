@@ -6,9 +6,9 @@ import (
 	"math"
 	"time"
 
-	"github.com/franko/crypto-oracle/internal/token"
-	"github.com/franko/crypto-oracle/internal/wallet"
-	"github.com/franko/crypto-oracle/pkg/models"
+	"github.com/franky69420/crypto-oracle/internal/token"
+	"github.com/franky69420/crypto-oracle/internal/wallet"
+	"github.com/franky69420/crypto-oracle/pkg/models"
 	"github.com/sirupsen/logrus"
 )
 

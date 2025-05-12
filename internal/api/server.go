@@ -8,9 +8,9 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
-	"github.com/franko/crypto-oracle/internal/memory"
-	"github.com/franko/crypto-oracle/pkg/utils/config"
-	"github.com/franko/crypto-oracle/pkg/utils/logger"
+	"github.com/franky69420/crypto-oracle/internal/memory"
+	"github.com/franky69420/crypto-oracle/pkg/utils/config"
+	"github.com/franky69420/crypto-oracle/pkg/utils/logger"
 )
 
 // Server gère le serveur HTTP pour l'API

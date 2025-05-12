@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/franko/crypto-oracle/pkg/models"
-	"github.com/franko/crypto-oracle/pkg/utils/config"
+	"github.com/franky69420/crypto-oracle/pkg/models"
+	"github.com/franky69420/crypto-oracle/pkg/utils/config"
 	"go.uber.org/zap"
 )
 

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/franko/crypto-oracle/internal/memory"
-	"github.com/franko/crypto-oracle/pkg/models"
+	"github.com/franky69420/crypto-oracle/internal/memory"
+	"github.com/franky69420/crypto-oracle/pkg/models"
 
 	"github.com/sirupsen/logrus"
 )

@@ -3,7 +3,7 @@ package memory
 import (
 	"context"
 
-	"github.com/franko/crypto-oracle/pkg/models"
+	"github.com/franky69420/crypto-oracle/pkg/models"
 )
 
 // MemoryOfTrust définit l'interface pour le système de confiance des wallets

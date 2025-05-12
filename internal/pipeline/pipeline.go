@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/franko/crypto-oracle/internal/storage/cache"
+	"github.com/franky69420/crypto-oracle/internal/storage/cache"
 	"github.com/sirupsen/logrus"
 )
 

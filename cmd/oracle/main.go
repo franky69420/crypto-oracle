@@ -6,9 +6,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/franko/crypto-oracle/pkg/utils/config"
-	"github.com/franko/crypto-oracle/pkg/utils/logger"
-	"github.com/franko/crypto-oracle/cmd/oracle/startup"
+	"github.com/franky69420/crypto-oracle/pkg/utils/config"
+	"github.com/franky69420/crypto-oracle/pkg/utils/logger"
+	"github.com/franky69420/crypto-oracle/cmd/oracle/startup"
 )
 
 func main() {

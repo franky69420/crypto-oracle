@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/franko/crypto-oracle/pkg/utils/config"
+	"github.com/franky69420/crypto-oracle/pkg/utils/config"
 	"github.com/go-redis/redis/v8"
 	"github.com/sirupsen/logrus"
 )

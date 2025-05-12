@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/franko/crypto-oracle/pkg/models"
+	"github.com/franky69420/crypto-oracle/pkg/models"
 )
 
 // SaveWalletInteraction enregistre une interaction wallet-token dans la base de données

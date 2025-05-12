@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/franko/crypto-oracle/pkg/models"
+	"github.com/franky69420/crypto-oracle/pkg/models"
 )
 
 // SaveWalletSimilarities enregistre les similarités entre wallets

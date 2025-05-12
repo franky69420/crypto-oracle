@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/franko/crypto-oracle/internal/memory"
-	"github.com/franko/crypto-oracle/pkg/utils/logger"
-	"github.com/franko/crypto-oracle/pkg/models"
+	"github.com/franky69420/crypto-oracle/internal/memory"
+	"github.com/franky69420/crypto-oracle/pkg/utils/logger"
+	"github.com/franky69420/crypto-oracle/pkg/models"
 )
 
 // ActiveWalletHandler gère les requêtes API relatives aux wallets actifs

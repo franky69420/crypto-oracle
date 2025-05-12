@@ -9,8 +9,8 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/franko/crypto-oracle/pkg/utils/config"
-	"github.com/franko/crypto-oracle/pkg/utils/logger"
+	"github.com/franky69420/crypto-oracle/pkg/utils/config"
+	"github.com/franky69420/crypto-oracle/pkg/utils/logger"
 )
 
 // Connection représente une connexion à la base de données

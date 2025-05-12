@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/franko/crypto-oracle/pkg/models"
+	"github.com/franky69420/crypto-oracle/pkg/models"
 )
 
 // GetEarlyTokenTransactions récupère les premières transactions d'un token

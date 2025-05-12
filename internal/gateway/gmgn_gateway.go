@@ -3,10 +3,10 @@ package gateway
 import (
 	"time"
 
-	"github.com/franko/crypto-oracle/pkg/gmgn"
-	"github.com/franko/crypto-oracle/pkg/models"
-	"github.com/franko/crypto-oracle/pkg/utils/config"
-	"github.com/franko/crypto-oracle/pkg/utils/logger"
+	"github.com/franky69420/crypto-oracle/pkg/gmgn"
+	"github.com/franky69420/crypto-oracle/pkg/models"
+	"github.com/franky69420/crypto-oracle/pkg/utils/config"
+	"github.com/franky69420/crypto-oracle/pkg/utils/logger"
 )
 
 // GMGNGateway est la passerelle vers l'API GMGN

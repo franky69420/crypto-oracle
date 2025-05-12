@@ -7,10 +7,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/franko/crypto-oracle/internal/alerting"
-	"github.com/franko/crypto-oracle/internal/pipeline"
-	"github.com/franko/crypto-oracle/internal/storage/cache"
-	"github.com/franko/crypto-oracle/pkg/utils/config"
+	"github.com/franky69420/crypto-oracle/internal/alerting"
+	"github.com/franky69420/crypto-oracle/internal/pipeline"
+	"github.com/franky69420/crypto-oracle/internal/storage/cache"
+	"github.com/franky69420/crypto-oracle/pkg/utils/config"
 	"github.com/sirupsen/logrus"
 )
 

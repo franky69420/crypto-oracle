@@ -7,7 +7,7 @@ import (
 	"math"
 	"strings"
 
-	"github.com/franko/crypto-oracle/pkg/models"
+	"github.com/franky69420/crypto-oracle/pkg/models"
 )
 
 // cleanObsoleteCaches nettoie les caches obsolètes
