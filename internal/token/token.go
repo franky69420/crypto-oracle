@@ -8,25 +8,30 @@ import (
 
 	"github.com/franky69420/crypto-oracle/internal/gateway/gmgn"
 	"github.com/franky69420/crypto-oracle/internal/memory"
+	"github.com/franky69420/crypto-oracle/internal/pipeline"
 	"github.com/franky69420/crypto-oracle/pkg/models"
 	"github.com/sirupsen/logrus"
 )
 
 // Engine gère les opérations sur les tokens
 type Engine struct {
-	gmgn         *gmgn.Client
+	gmgn          *gmgn.Client
 	memoryOfTrust memory.MemoryOfTrust
-	logger       *logrus.Logger
-	tokens       map[string]*models.Token // Cache en mémoire, à remplacer par Redis en prod
+	pipelineSvc   *pipeline.Pipeline
+	logger        *logrus.Logger
+	tokens        map[string]*models.Token // Cache en mémoire, à remplacer par Redis en prod
+	metrics       map[string]*models.TokenMetrics
 }
 
 // NewEngine crée un nouveau moteur de token
-func NewEngine(gmgn *gmgn.Client, memoryOfTrust memory.MemoryOfTrust, logger *logrus.Logger) *Engine {
+func NewEngine(gmgn *gmgn.Client, memoryOfTrust memory.MemoryOfTrust, pipelineSvc *pipeline.Pipeline, logger *logrus.Logger) *Engine {
 	return &Engine{
-		gmgn:         gmgn,
+		gmgn:          gmgn,
 		memoryOfTrust: memoryOfTrust,
-		logger:       logger,
-		tokens:       make(map[string]*models.Token),
+		pipelineSvc:   pipelineSvc,
+		logger:        logger,
+		tokens:        make(map[string]*models.Token),
+		metrics:       make(map[string]*models.TokenMetrics),
 	}
 }
 
@@ -210,26 +215,202 @@ func (e *Engine) GetWalletTokenHistory(walletAddress, tokenAddress string) ([]mo
 	return history, nil
 }
 
-// UpdateTokenState met à jour l'état du cycle de vie d'un token
+// UpdateTokenState met à jour l'état d'un token et publie un événement
 func (e *Engine) UpdateTokenState(tokenAddress, newState string) error {
-	// Logique à implémenter avec DB
+	// Récupérer le token
+	token, err := e.GetToken(tokenAddress)
+	if err != nil {
+		return fmt.Errorf("failed to get token: %w", err)
+	}
+
+	// Mettre à jour l'état (dans une implémentation réelle, il faudrait modifier la base de données)
+	oldState := "unknown" // Dans une implémentation complète, récupérer l'ancien état
+
 	e.logger.WithFields(logrus.Fields{
 		"token_address": tokenAddress,
+		"token_symbol":  token.Symbol,
+		"old_state":     oldState,
 		"new_state":     newState,
-	}).Info("Token state updated")
-	
+	}).Info("Updating token state")
+
+	// Publier un événement si le pipeline est disponible
+	if e.pipelineSvc != nil {
+		event := pipeline.Message{
+			Type:      "state_change",
+			Timestamp: time.Now(),
+			Payload: map[string]interface{}{
+				"token_address": tokenAddress,
+				"token_symbol":  token.Symbol,
+				"old_state":     oldState,
+				"new_state":     newState,
+			},
+		}
+
+		if err := e.pipelineSvc.PublishMessage("token_events", event); err != nil {
+			e.logger.WithError(err).Warn("Failed to publish state change event")
+			// Continuer malgré l'erreur
+		}
+	}
+
 	return nil
 }
 
-// SaveReactivationMetrics sauvegarde les métriques de réactivation d'un token
+// SaveReactivationMetrics enregistre les métriques de réactivation et génère un événement
 func (e *Engine) SaveReactivationMetrics(candidate models.ReactivationCandidate) error {
-	// Logique à implémenter avec DB
 	e.logger.WithFields(logrus.Fields{
 		"token_address":      candidate.TokenAddress,
+		"token_symbol":       candidate.TokenSymbol,
 		"reactivation_score": candidate.ReactivationScore,
-	}).Info("Reactivation metrics saved")
-	
+	}).Info("Saving reactivation metrics")
+
+	// Dans une implémentation réelle, sauvegarder dans la base de données
+
+	// Publier un événement si le pipeline est disponible
+	if e.pipelineSvc != nil {
+		event := pipeline.Message{
+			Type:      "reactivation",
+			Timestamp: time.Now(),
+			Payload: map[string]interface{}{
+				"token_address":      candidate.TokenAddress,
+				"token_symbol":       candidate.TokenSymbol,
+				"reactivation_score": candidate.ReactivationScore,
+				"changes":            candidate.Changes,
+				"detected_at":        candidate.DetectedAt.Format(time.RFC3339),
+				"smart_returns":      candidate.SmartReturns != nil,
+			},
+		}
+
+		if err := e.pipelineSvc.PublishMessage("token_events", event); err != nil {
+			e.logger.WithError(err).Warn("Failed to publish reactivation event")
+			// Continuer malgré l'erreur
+		}
+	}
+
 	return nil
+}
+
+// MonitorPriceMovements surveille les mouvements de prix et génère des événements
+func (e *Engine) MonitorPriceMovements(ctx context.Context, interval time.Duration) {
+	ticker := time.NewTicker(interval)
+	defer ticker.Stop()
+
+	e.logger.Info("Starting price movement monitoring")
+
+	for {
+		select {
+		case <-ctx.Done():
+			e.logger.Info("Stopping price movement monitoring")
+			return
+		case <-ticker.C:
+			e.checkPriceMovements()
+		}
+	}
+}
+
+// checkPriceMovements vérifie les mouvements de prix significatifs
+func (e *Engine) checkPriceMovements() {
+	e.logger.Debug("Checking price movements")
+
+	// Dans une implémentation réelle, récupérer les tokens à surveiller depuis la base de données
+	// Pour l'exemple, utiliser les tokens en cache
+	for addr, token := range e.tokens {
+		// Récupérer les métriques actuelles
+		currentMetrics, err := e.GetTokenMetrics(addr)
+		if err != nil {
+			e.logger.WithError(err).Warn("Failed to get token metrics")
+			continue
+		}
+
+		// Récupérer les métriques précédentes depuis le cache
+		var prevMetrics *models.TokenMetrics
+		var ok bool
+		if prevMetrics, ok = e.metrics[addr]; !ok {
+			// Si pas de métriques précédentes, enregistrer les actuelles et continuer
+			e.metrics[addr] = currentMetrics
+			continue
+		}
+
+		// Calculer le changement de prix
+		priceChange := 0.0
+		if prevMetrics.Price > 0 {
+			priceChange = (currentMetrics.Price - prevMetrics.Price) / prevMetrics.Price * 100
+		}
+
+		// Calculer le changement de volume
+		volumeChange := 0.0
+		if prevMetrics.Volume24h > 0 {
+			volumeChange = (currentMetrics.Volume24h - prevMetrics.Volume24h) / prevMetrics.Volume24h * 100
+		}
+
+		// Mettre à jour les métriques en cache
+		e.metrics[addr] = currentMetrics
+
+		// Générer des événements si changements significatifs
+		if math.Abs(priceChange) >= 5 {
+			// Changement de prix de 5% ou plus
+			e.publishPriceChangeEvent(token, priceChange)
+		}
+
+		if volumeChange >= 20 {
+			// Augmentation de volume de 20% ou plus
+			e.publishVolumeChangeEvent(token, volumeChange)
+		}
+	}
+}
+
+// publishPriceChangeEvent publie un événement de changement de prix
+func (e *Engine) publishPriceChangeEvent(token *models.Token, priceChange float64) {
+	if e.pipelineSvc == nil {
+		return
+	}
+
+	e.logger.WithFields(logrus.Fields{
+		"token_address": token.Address,
+		"token_symbol":  token.Symbol,
+		"price_change":  priceChange,
+	}).Info("Significant price change detected")
+
+	event := pipeline.Message{
+		Type:      "price_change",
+		Timestamp: time.Now(),
+		Payload: map[string]interface{}{
+			"token_address": token.Address,
+			"token_symbol":  token.Symbol,
+			"price_change":  priceChange,
+			"is_positive":   priceChange > 0,
+		},
+	}
+
+	if err := e.pipelineSvc.PublishMessage("token_events", event); err != nil {
+		e.logger.WithError(err).Warn("Failed to publish price change event")
+	}
+}
+
+// publishVolumeChangeEvent publie un événement de changement de volume
+func (e *Engine) publishVolumeChangeEvent(token *models.Token, volumeChange float64) {
+	if e.pipelineSvc == nil {
+		return
+	}
+
+	e.logger.WithFields(logrus.Fields{
+		"token_address": token.Address,
+		"token_symbol":  token.Symbol,
+		"volume_change": volumeChange,
+	}).Info("Significant volume change detected")
+
+	event := pipeline.Message{
+		Type:      "volume_spike",
+		Timestamp: time.Now(),
+		Payload: map[string]interface{}{
+			"token_address": token.Address,
+			"token_symbol":  token.Symbol,
+			"volume_change": volumeChange,
+		},
+	}
+
+	if err := e.pipelineSvc.PublishMessage("token_events", event); err != nil {
+		e.logger.WithError(err).Warn("Failed to publish volume change event")
+	}
 }
 
 // CalculateXScore calcule le X-Score pour un token

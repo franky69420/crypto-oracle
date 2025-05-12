@@ -1,0 +1,103 @@
+# Configuration de production pour Crypto Oracle
+
+# Logging
+log:
+  level: "info"  # debug, info, warn, error
+  format: "json"
+  output: "file"  # console, file
+  file: "/app/logs/crypto-oracle.log"
+
+# API
+api:
+  host: "0.0.0.0"
+  port: 3000
+  read_timeout: 30
+  write_timeout: 30
+  max_header_bytes: 1048576
+
+# Base de données
+database:
+  host: "postgres"
+  port: 5432
+  user: "crypto_oracle"
+  password: "${POSTGRES_PASSWORD}"  # Remplacé par la variable d'environnement
+  name: "crypto_oracle"
+  ssl_mode: "disable"
+  max_connections: 25
+  min_connections: 5
+  max_conn_lifetime: 1800
+  max_conn_idle_time: 300
+  health_check_period: 30
+
+# Redis
+redis:
+  host: "redis"
+  port: 6379
+  password: "${REDIS_PASSWORD}"  # Remplacé par la variable d'environnement
+  db: 0
+  pool_size: 20
+
+# GMGN API
+gmgn:
+  base_url: "https://gmgn.ai"
+  client_id: "${GMGN_CLIENT_ID}"
+  device_id: "${GMGN_DEVICE_ID}"
+  from_app: "web"
+  app_ver: "1.0.0"
+  tz_name: "Europe/Paris"
+  tz_offset: "+0100"
+  app_lang: "en"
+  request_timeout: 30
+  rate_limit_delay: 500  # ms entre les requêtes
+
+# Métriques et surveillance
+metrics:
+  enabled: true
+  prometheus_endpoint: "/metrics"
+  collection_interval: 15  # secondes
+
+# Gestion des alertes
+alerting:
+  enabled: true
+  notification:
+    email:
+      enabled: false
+      smtp_host: "smtp.example.com"
+      smtp_port: 587
+      smtp_user: "${SMTP_USER}"
+      smtp_password: "${SMTP_PASSWORD}"
+      from: "alerts@crypto-oracle.example.com"
+      to: ["admin@example.com"]
+    telegram:
+      enabled: true
+      bot_token: "${TELEGRAM_BOT_TOKEN}"
+      chat_id: "${TELEGRAM_CHAT_ID}"
+
+# Memory of Trust
+memory_of_trust:
+  maintenance_interval: 21600  # 6 heures en secondes
+  trust_score:
+    default: 50.0
+    min: 0.0
+    max: 100.0
+    threshold_trusted: 70.0
+    threshold_smart: 80.0
+    
+# Pipeline
+pipeline:
+  streams:
+    token_events: "token_events"
+    wallet_events: "wallet_events"
+    alert_events: "alert_events"
+
+# Token Engine
+token_engine:
+  price_monitoring_interval: 300  # 5 minutes en secondes
+  cache_ttl: 1800  # 30 minutes en secondes
+  max_tokens_in_memory: 1000
+  
+# Wallet Intelligence
+wallet_intelligence:
+  profile_cache_ttl: 3600  # 1 heure en secondes
+  trust_threshold: 70.0
+  smart_threshold: 85.0 

@@ -2,10 +2,13 @@ package pipeline
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/franky69420/crypto-oracle/internal/storage/cache"
+	"github.com/franky69420/crypto-oracle/pkg/models"
 	"github.com/sirupsen/logrus"
 )
 
@@ -83,20 +86,33 @@ func (p *Pipeline) PublishMessage(streamName string, message Message) error {
 		message.Timestamp = time.Now()
 	}
 
-	// Convertir en format Redis (map[string]interface{})
-	values := map[string]interface{}{
-		"id":        message.ID,
-		"type":      message.Type,
-		"timestamp": message.Timestamp.Format(time.RFC3339),
+	// Sérialiser tout le message en JSON d'abord
+	jsonData, err := json.Marshal(message)
+	if err != nil {
+		return fmt.Errorf("failed to marshal message: %w", err)
 	}
 
-	// Ajouter tous les champs du payload
-	for k, v := range message.Payload {
-		values[k] = v
+	// Désérialiser en map pour Redis
+	var messageMap map[string]interface{}
+	if err := json.Unmarshal(jsonData, &messageMap); err != nil {
+		return fmt.Errorf("failed to unmarshal message to map: %w", err)
+	}
+
+	// Traiter spécifiquement les structures complexes
+	for k, v := range messageMap {
+		// Si c'est une structure complexe (map ou slice), la resérialiser en JSON
+		switch val := v.(type) {
+		case map[string]interface{}, []interface{}:
+			jsonBytes, err := json.Marshal(val)
+			if err != nil {
+				return fmt.Errorf("failed to marshal nested data: %w", err)
+			}
+			messageMap[k] = string(jsonBytes)
+		}
 	}
 
 	// Publier dans Redis Stream
-	err := p.cache.XAdd(streamName, values)
+	err = p.cache.XAdd(streamName, messageMap)
 	if err != nil {
 		return fmt.Errorf("failed to publish message: %w", err)
 	}
@@ -162,12 +178,32 @@ func (p *Pipeline) startConsumer(ctx context.Context, streamName string, process
 					if k == "type" {
 						message.Type = v.(string)
 					} else if k == "timestamp" {
-						ts, err := time.Parse(time.RFC3339, v.(string))
-						if err == nil {
-							message.Timestamp = ts
+						// Détecter si c'est un timestamp sous forme de string ou un unix timestamp
+						switch tv := v.(type) {
+						case string:
+							ts, err := time.Parse(time.RFC3339, tv)
+							if err == nil {
+								message.Timestamp = ts
+							}
+						case float64:
+							message.Timestamp = time.Unix(int64(tv), 0)
 						}
 					} else {
-						message.Payload[k] = v
+						// Pour les autres champs, vérifier si c'est du JSON sérialisé
+						if strVal, ok := v.(string); ok && (strings.HasPrefix(strVal, "{") || strings.HasPrefix(strVal, "[")) {
+							// Tenter de désérialiser le JSON
+							var obj interface{}
+							if err := json.Unmarshal([]byte(strVal), &obj); err == nil {
+								// Si c'est bien du JSON, l'ajouter tel quel
+								message.Payload[k] = obj
+							} else {
+								// Sinon ajouter comme string
+								message.Payload[k] = strVal
+							}
+						} else {
+							// Ajouter directement si ce n'est pas un JSON sérialisé
+							message.Payload[k] = v
+						}
 					}
 				}
 
@@ -219,6 +255,144 @@ func (p *TokenDetectionProcessor) Process(message Message) error {
 
 // GetName retourne le nom du processeur
 func (p *TokenDetectionProcessor) GetName() string {
+	return p.name
+}
+
+// TokenProcessor est un processeur pour les événements de tokens
+type TokenProcessor struct {
+	name        string
+	tokenEngine interface {
+		GetToken(tokenAddress string) (*models.Token, error)
+		UpdateTokenState(tokenAddress, newState string) error
+		SaveReactivationMetrics(candidate models.ReactivationCandidate) error
+	}
+	logger      *logrus.Logger
+}
+
+// NewTokenProcessor crée un nouveau processeur d'événements de tokens
+func NewTokenProcessor(tokenEngine interface {
+	GetToken(tokenAddress string) (*models.Token, error)
+	UpdateTokenState(tokenAddress, newState string) error
+	SaveReactivationMetrics(candidate models.ReactivationCandidate) error
+}, logger *logrus.Logger) *TokenProcessor {
+	return &TokenProcessor{
+		name:        "token_processor",
+		tokenEngine: tokenEngine,
+		logger:      logger,
+	}
+}
+
+// Process traite un événement de token
+func (p *TokenProcessor) Process(message Message) error {
+	p.logger.WithFields(logrus.Fields{
+		"msg_id":   message.ID,
+		"msg_type": message.Type,
+	}).Debug("Processing token event")
+
+	// Valider le message
+	tokenAddress, ok := message.Payload["token_address"].(string)
+	if !ok {
+		return fmt.Errorf("missing or invalid token_address in message payload")
+	}
+
+	// Traiter différents types d'événements
+	switch message.Type {
+	case "price_change":
+		return p.processPriceChange(tokenAddress, message.Payload)
+	case "volume_spike":
+		return p.processVolumeSpike(tokenAddress, message.Payload)
+	case "reactivation":
+		return p.processReactivation(tokenAddress, message.Payload)
+	case "state_change":
+		return p.processStateChange(tokenAddress, message.Payload)
+	default:
+		p.logger.WithFields(logrus.Fields{
+			"event_type": message.Type,
+		}).Info("Unknown event type, ignoring")
+		return nil
+	}
+}
+
+// processPriceChange traite un changement de prix
+func (p *TokenProcessor) processPriceChange(tokenAddress string, payload map[string]interface{}) error {
+	// Extraire les données
+	priceChange, ok := payload["price_change"].(float64)
+	if !ok {
+		return fmt.Errorf("missing or invalid price_change in payload")
+	}
+
+	p.logger.WithFields(logrus.Fields{
+		"token_address": tokenAddress,
+		"price_change":  priceChange,
+	}).Info("Processing price change event")
+
+	// Logique à implémenter selon les besoins
+	return nil
+}
+
+// processVolumeSpike traite un pic de volume
+func (p *TokenProcessor) processVolumeSpike(tokenAddress string, payload map[string]interface{}) error {
+	// Extraire les données
+	volume, ok := payload["volume"].(float64)
+	if !ok {
+		return fmt.Errorf("missing or invalid volume in payload")
+	}
+
+	p.logger.WithFields(logrus.Fields{
+		"token_address": tokenAddress,
+		"volume":        volume,
+	}).Info("Processing volume spike event")
+
+	// Logique à implémenter selon les besoins
+	return nil
+}
+
+// processReactivation traite une réactivation de token
+func (p *TokenProcessor) processReactivation(tokenAddress string, payload map[string]interface{}) error {
+	// Extraire les données
+	reactivationScore, ok := payload["reactivation_score"].(float64)
+	if !ok {
+		return fmt.Errorf("missing or invalid reactivation_score in payload")
+	}
+
+	p.logger.WithFields(logrus.Fields{
+		"token_address":      tokenAddress,
+		"reactivation_score": reactivationScore,
+	}).Info("Processing token reactivation event")
+
+	// Changer l'état du token
+	err := p.tokenEngine.UpdateTokenState(tokenAddress, models.LifecycleStateReactivated)
+	if err != nil {
+		return fmt.Errorf("failed to update token state: %w", err)
+	}
+
+	return nil
+}
+
+// processStateChange traite un changement d'état de token
+func (p *TokenProcessor) processStateChange(tokenAddress string, payload map[string]interface{}) error {
+	// Extraire les données
+	newState, ok := payload["new_state"].(string)
+	if !ok {
+		return fmt.Errorf("missing or invalid new_state in payload")
+	}
+
+	p.logger.WithFields(logrus.Fields{
+		"token_address": tokenAddress,
+		"new_state":     newState,
+	}).Info("Processing token state change event")
+
+	// Mettre à jour l'état du token
+	err := p.tokenEngine.UpdateTokenState(tokenAddress, newState)
+	if err != nil {
+		return fmt.Errorf("failed to update token state: %w", err)
+	}
+
+	return nil
+}
+
+// GetName retourne le nom du processeur
+func (p *TokenProcessor) GetName() string {
 	return p.name
 }
 
