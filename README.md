@@ -1,159 +1,139 @@
-# Crypto Oracle - Memecoin Detector v4.2
+# Crypto Oracle Memecoin Detector
 
-Crypto Oracle est un système d'analyse et de détection de memecoins basé sur des métriques avancées et un réseau de confiance de wallets.
+A sophisticated system for detecting, filtering, and monitoring promising memecoin tokens on the Solana blockchain, with a focus on early detection and smart money analysis.
 
-## Fonctionnalités
+## Overview
 
-- **Alert Manager**: Système d'alertes pour détecter des événements importants sur les tokens
-- **Pipeline Service**: Infrastructure de traitement des événements en temps réel
-- **Reactivation System**: Détection de la réactivation de tokens dormants
-- **Token Engine**: Moteur d'analyse des tokens et de leurs métriques
-- **Memory of Trust**: Réseau de confiance pour évaluer la fiabilité des wallets
-- **Wallet Intelligence**: Analyse avancée des comportements des wallets
+Crypto Oracle is designed to identify tokens that have recently been "completed" (migrated to an AMM like Raydium or Jupiter) and analyze them using a multi-stage filtering process and a proprietary X-Score algorithm. The system tracks wallet behaviors, identifies smart money patterns, and generates alerts for tokens with high potential.
 
-## Architecture
+## Key Features
 
-Le système est composé de plusieurs modules:
+- **Automated Token Detection**: Constantly monitors for newly completed tokens on Solana
+- **Sophisticated Filtering**: Multi-level filtering based on market cap, holders, creator balance, etc.
+- **Smart Money Analysis**: Identifies and tracks wallets with consistent successful trading patterns
+- **X-Score Algorithm**: Proprietary scoring system to evaluate token potential based on multiple factors
+- **Memory of Trust**: Network of trust that tracks relationships between wallets and tokens over time
+- **Lifecycle Management**: Tokens progress through different states based on their potential and activity
+- **Reactivation Detection**: Monitors dormant tokens for signs of renewed activity
+- **Notification System**: Configurable alerts for different token states and events
+
+## System Components
+
+- **Token Engine**: Core system for token detection, analysis, and lifecycle management
+- **Memory of Trust**: Tracks wallet interactions and calculates trust scores
+- **GMGN Adapter**: Connects to the GMGN API to retrieve token and wallet data
+- **Notification Pipeline**: Routes alerts to configured destinations (console, Telegram, webhooks)
+- **Filtering System**: Applies strict criteria to identify high-quality tokens
+- **X-Score Calculation**: Computes potential score based on multiple weighted factors
+
+## System Architecture
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Alert Manager │    │ Pipeline Service │    │  API Service    │
-└────────┬────────┘    └────────┬────────┘    └────────┬────────┘
-         │                      │                      │
-         └──────────────┬───────┴──────────────┬──────┘
-                        │                      │
-               ┌────────┴────────┐    ┌────────┴────────┐
-               │   Token Engine  │    │Wallet Intelligence
-               └────────┬────────┘    └────────┬────────┘
-                        │                      │
-                        └──────────┬───────────┘
-                                   │
-                        ┌──────────┴───────────┐
-                        │   Memory of Trust    │
-                        └──────────┬───────────┘
-                                   │
-                        ┌──────────┴───────────┐
-                        │   Data Storage       │
-                        │  (PostgreSQL/Redis)  │
-                        └──────────────────────┘
+│  GMGN Adapter   │───▶│   Token Engine   │───▶│  Notifications  │
+└─────────────────┘    └────────┬────────┘    └─────────────────┘
+                               │
+                      ┌────────▼────────┐
+                      │  Memory of Trust │
+                      └────────┬────────┘
+                               │
+                      ┌────────▼────────┐
+                      │  Storage/Cache  │
+                      └─────────────────┘
 ```
 
-## Technologies utilisées
+## Token Lifecycle States
 
-- **Go**: Langage de programmation principal
-- **PostgreSQL**: Base de données principale
-- **Redis**: Cache et pipeline de messages
-- **Docker**: Conteneurisation pour le déploiement
-- **Prometheus/Grafana**: Surveillance et métriques
+| State           | Description                        | TTL    | Polling Interval |
+|-----------------|------------------------------------| -------|------------------|
+| DISCOVERED      | Initial scan completed             | 6h     | 15min            |
+| VALIDATED       | X-Score > 60, promising            | 24h    | 5min             |
+| HYPED           | X-Score > 80, high priority        | 48h    | 1min             |
+| SLEEP_MODE      | Reduced activity                   | 30d    | 1h               |
+| MONITORING_LIGHT| Potential for reactivation         | 30d    | 15min            |
+| REACTIVATED     | Renewed activity                   | 48h    | 1min             |
+
+## X-Score Components
+
+The X-Score is a weighted combination of these factors:
+
+- **Token Quality (20%)**: Market cap, holder count, creator balance, top holder concentration
+- **Wallet Quality (25%)**: Smart money ratio, trusted wallets, bot ratio, fresh wallet rate
+- **Trust Factor (20%)**: Average trust score, early trusted wallets, smart money presence
+- **Market Dynamics (15%)**: Volume, price change, buy/sell ratio, holder growth
+- **Temporal Patterns (10%)**: Time-based activity patterns
+- **Reactivation Factor (10%)**: Signs of renewed activity after dormancy
+- **Special Bonuses**: Sniper wallet presence, smart money combined with price increase
 
 ## Installation
 
-### Prérequis
-
-- Go 1.20 ou supérieur
-- Docker et Docker Compose
-- PostgreSQL 13+ et Redis 6+
-
-### Avec Docker (recommandé)
-
-1. Cloner le dépôt:
-   ```bash
-   git clone https://github.com/franky69420/crypto-oracle.git
-   cd crypto-oracle
-   ```
-
-2. Configurer les variables d'environnement:
-   ```bash
-   cp .env.example .env
-   # Éditer le fichier .env avec vos paramètres
-   ```
-
-3. Démarrer les services:
-   ```bash
-   # Environnement de développement
-   docker-compose up -d
-   
-   # Environnement de production
-   docker-compose -f docker-compose.prod.yml up -d
-   ```
-
-### Développement local
-
-1. Démarrer les services de base de données:
-   ```bash
-   docker-compose up -d postgres redis
-   ```
-
-2. Compiler et exécuter l'application:
-   ```bash
-   go build -o crypto-oracle ./cmd/main.go
-   ./crypto-oracle -config config/dev.yaml
-   ```
-
-## Tests
-
-### Exécuter les tests unitaires
-
-```bash
-go test ./...
+1. Clone the repository:
+```
+git clone https://github.com/franky69420/crypto-oracle.git
+cd crypto-oracle
 ```
 
-### Exécuter les tests d'intégration
-
-```bash
-go test -tags=integration ./...
+2. Install dependencies:
+```
+go mod download
 ```
 
-### Tester des modules spécifiques
-
-```bash
-# Tester le Pipeline et le Token Engine
-go run test-pipeline-token.go
+3. Create configuration file:
+```
+cp config.example.yaml config.yaml
 ```
 
-## Déploiement en production
+4. Edit the configuration file with your settings
 
-Le projet inclut une configuration Docker Compose complète pour un déploiement en production:
+## Usage
 
-```bash
-# Préparation
-mkdir -p ./monitoring/prometheus ./monitoring/grafana/provisioning ./traefik
+### Live Monitoring Mode
 
-# Configuration
-cp config/prod.example.yaml config/prod.yaml
-# Éditer config/prod.yaml selon vos besoins
-
-# Démarrage
-docker-compose -f docker-compose.prod.yml up -d
+```
+go run cmd/detector/detector.go --mode=live
 ```
 
-La configuration de production inclut:
-- Traefik pour le routage HTTPS avec Let's Encrypt
-- Prometheus et Grafana pour la surveillance
-- Répliques et volumes persistants pour les données
+### Token Scanner
 
-## API Endpoints
+The Token Scanner is a simpler version of the Crypto Oracle detector that focuses specifically on detecting newly completed tokens and tracking their metrics. It's useful for testing the token detection engine without requiring a full database setup.
 
-L'API REST est disponible sur le port 3000 par défaut:
+To run the token scanner:
 
-- `GET /api/health`: Vérification de l'état du service
-- `GET /api/tokens/{token_id}`: Informations sur un token
-- `GET /api/tokens/{token_id}/active-wallets`: Liste des wallets actifs sur un token
+```
+# Using make
+make run-token-scan
 
-## Contribuer
+# Or directly with Go
+go run cmd/token-scan/main.go
+```
 
-Les contributions sont les bienvenues! Veuillez suivre ces étapes:
+To build the token scanner binary:
 
-1. Forker le dépôt
-2. Créer une branche (`git checkout -b feature/amazing-feature`)
-3. Committer vos changements (`git commit -m 'Add some amazing feature'`)
-4. Pousser vers la branche (`git push origin feature/amazing-feature`)
-5. Ouvrir une Pull Request
+```
+make build-token-scan
+```
 
-## Licence
+The token scanner connects directly to the GMGN API and implements simplified versions of the Memory of Trust and notification components.
 
-Distribué sous la licence MIT. Voir `LICENSE` pour plus d'informations.
+### Configuration Options
 
-## Contact
+```
+--config string      Path to configuration file
+--log-level string   Log level (debug, info, warn, error)
+--console            Output logs to console
+--log-file string    Output logs to file
+--mode string        Run mode (live, backtest)
+```
 
-Franky - [@franky69420](https://github.com/franky69420) 
+## Requirements
+
+- Go 1.16+
+- Redis
+- PostgreSQL
+- GMGN API access
+
+## License
+
+Copyright © 2023 Franky69420
+
+This software is proprietary and confidential. Unauthorized copying or distribution of this software, via any medium, is strictly prohibited. 

@@ -8,6 +8,9 @@ crypto-oracle
 test-build
 test-core
 internal-build
+token-scan
+token_live
+bin/
 
 # Test binary, built with `go test -c`
 *.test
