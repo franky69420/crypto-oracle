@@ -6,7 +6,6 @@ import (
 	"math"
 	"time"
 
-	"github.com/franky69420/crypto-oracle/internal/gateway/gmgn"
 	"github.com/franky69420/crypto-oracle/internal/memory"
 	"github.com/franky69420/crypto-oracle/internal/pipeline"
 	"github.com/franky69420/crypto-oracle/pkg/models"
@@ -15,7 +14,13 @@ import (
 
 // Engine gère les opérations sur les tokens
 type Engine struct {
-	gmgn          *gmgn.Client
+	gmgn          interface {
+		GetTokenInfo(tokenAddress string) (*models.Token, error)
+		GetTokenStats(tokenAddress string) (*models.TokenStats, error)
+		GetTokenTrades(tokenAddress string, limit int) ([]models.TokenTrade, error)
+		GetTokenPrice(tokenAddress string) (*models.TokenPrice, error)
+		GetWalletTokenTrades(walletAddress, tokenAddress string, limit int) ([]models.TokenTrade, error)
+	}
 	memoryOfTrust memory.MemoryOfTrust
 	pipelineSvc   *pipeline.Pipeline
 	logger        *logrus.Logger
@@ -24,7 +29,13 @@ type Engine struct {
 }
 
 // NewEngine crée un nouveau moteur de token
-func NewEngine(gmgn *gmgn.Client, memoryOfTrust memory.MemoryOfTrust, pipelineSvc *pipeline.Pipeline, logger *logrus.Logger) *Engine {
+func NewEngine(gmgn interface {
+		GetTokenInfo(tokenAddress string) (*models.Token, error)
+		GetTokenStats(tokenAddress string) (*models.TokenStats, error)
+		GetTokenTrades(tokenAddress string, limit int) ([]models.TokenTrade, error)
+		GetTokenPrice(tokenAddress string) (*models.TokenPrice, error)
+		GetWalletTokenTrades(walletAddress, tokenAddress string, limit int) ([]models.TokenTrade, error)
+	}, memoryOfTrust memory.MemoryOfTrust, pipelineSvc *pipeline.Pipeline, logger *logrus.Logger) *Engine {
 	return &Engine{
 		gmgn:          gmgn,
 		memoryOfTrust: memoryOfTrust,
@@ -60,18 +71,18 @@ func (e *Engine) GetToken(tokenAddress string) (*models.Token, error) {
 		return nil, fmt.Errorf("failed to get token info: %w", err)
 	}
 
-	// Convertir au format interne
+	// Le token est déjà dans le bon format
 	token := &models.Token{
-		Address:          tokenAddress,
-		Symbol:           tokenInfo.Symbol,
-		Name:             tokenInfo.Name,
-		TotalSupply:      tokenInfo.TotalSupply,
-		HolderCount:      tokenInfo.HolderCount,
-		Logo:             tokenInfo.Logo,
-		Twitter:          tokenInfo.SocialLinks.Twitter,
-		Website:          tokenInfo.SocialLinks.Website,
-		Telegram:         tokenInfo.SocialLinks.Telegram,
-		CachedAt:         time.Now(),
+		Address:     tokenAddress,
+		Symbol:      tokenInfo.Symbol,
+		Name:        tokenInfo.Name,
+		TotalSupply: tokenInfo.TotalSupply,
+		HolderCount: tokenInfo.HolderCount,
+		Logo:        tokenInfo.Logo,
+		Twitter:     tokenInfo.Twitter,
+		Website:     tokenInfo.Website,
+		Telegram:    tokenInfo.Telegram,
+		CachedAt:    time.Now(),
 	}
 
 	// Mettre en cache

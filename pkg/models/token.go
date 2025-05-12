@@ -56,6 +56,13 @@ type TokenMetrics struct {
 	SmartMoneyHolders  int       `json:"smart_money_holders"`
 	AverageTrustScore  float64   `json:"average_trust_score"`
 	RiskFactor         float64   `json:"risk_factor"`
+	Volume1h           float64   `json:"volume_1h"`
+	Volume24h          float64   `json:"volume_24h"`
+	Price              float64   `json:"price"`
+	MarketCap          float64   `json:"market_cap"`
+	PriceChange1h      float64   `json:"price_change_1h"`
+	BuyCount1h         int       `json:"buy_count_1h"`
+	SellCount1h        int       `json:"sell_count_1h"`
 	UpdatedAt          time.Time `json:"updated_at"`
 }
 
@@ -69,9 +76,11 @@ type TokenTrade struct {
 	TokenSymbol   string    `json:"token_symbol"`
 	WalletAddress string    `json:"wallet_address"`
 	ActionType    string    `json:"action_type"` // buy, sell
+	TradeType     string    `json:"trade_type"` // buy, sell
 	Amount        float64   `json:"amount"`
 	Price         float64   `json:"price"`
 	Value         float64   `json:"value"`
+	TotalValue    float64   `json:"total_value"`
 	Success       bool      `json:"success"`
 }
 

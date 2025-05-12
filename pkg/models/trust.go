@@ -13,12 +13,16 @@ type WalletTrustScore struct {
 
 // TokenTrustMetrics représente les métriques de confiance pour un token
 type TokenTrustMetrics struct {
-	TokenAddress          string         `json:"token_address"`
-	ActiveWallets         int            `json:"active_wallets"`
-	TrustedWallets        int            `json:"trusted_wallets"`
-	AvgTrustScore         float64        `json:"avg_trust_score"`
+	TokenAddress           string         `json:"token_address"`
+	ActiveWallets          int            `json:"active_wallets"`
+	TrustedWallets         int            `json:"trusted_wallets"`
+	AvgTrustScore          float64        `json:"avg_trust_score"`
 	TrustScoreDistribution map[string]int `json:"trust_score_distribution"`
-	EarlyTrustRatio       float64        `json:"early_trust_ratio"`
+	EarlyTrustRatio        float64        `json:"early_trust_ratio"`
+	SmartMoneyCount        int            `json:"smart_money_count"`
+	SmartMoneyRatio        float64        `json:"smart_money_ratio"`
+	SmartMoneyActivity     float64        `json:"smart_money_activity"`
+	EarlyTrustedRatio      float64        `json:"early_trusted_ratio"`
 }
 
 // WalletSimilarity représente la similarité entre deux wallets

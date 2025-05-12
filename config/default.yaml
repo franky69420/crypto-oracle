@@ -1,0 +1,22 @@
+token_engine:
+  # Paramètres généraux du Token Engine
+  price_monitoring_interval: 60s  # Intervalle de vérification des changements de prix
+  price_change_threshold: 5.0     # Seuil de changement de prix significatif (%)
+  volume_change_threshold: 20.0   # Seuil de changement de volume significatif (%)
+  cache_ttl: 15m                  # Durée de vie du cache pour les données de tokens
+  
+  # Seuils de réactivation
+  reactivation:
+    min_score: 70.0             # Score minimum pour considérer un token réactivé
+    min_price_change: 2.0       # Changement de prix minimum (%)
+    min_volume_change: 50.0     # Changement de volume minimum (%)
+    smart_money_weight: 2.0     # Multiplicateur pour l'activité smart money
+
+  # Paramètres X-Score
+  x_score:
+    token_quality_weight: 0.20    # Poids de la qualité du token
+    wallet_quality_weight: 0.25   # Poids de la qualité des wallets
+    trust_factor_weight: 0.20     # Poids du facteur de confiance
+    market_dynamics_weight: 0.15  # Poids des dynamiques de marché
+    temporal_patterns_weight: 0.10 # Poids des patterns temporels
+    reactivation_weight: 0.10     # Poids du facteur de réactivation 

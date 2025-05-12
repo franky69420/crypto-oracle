@@ -1,4 +1,4 @@
-module github.com/franko/crypto-oracle
+module github.com/franky69420/crypto-oracle
 
 go 1.22.0
 

@@ -92,10 +92,20 @@ pipeline:
 
 # Token Engine
 token_engine:
-  price_monitoring_interval: 300  # 5 minutes en secondes
-  cache_ttl: 1800  # 30 minutes en secondes
-  max_tokens_in_memory: 1000
+  # In production, we enable price monitoring
+  enable_price_monitoring: true
+  price_monitoring_interval: 30s  # Check more frequently in production
+  price_change_threshold: 3.0     # Lower threshold to catch more movements
+  volume_change_threshold: 15.0   # Lower threshold to catch more movements
+  cache_ttl: 10m                  # Shorter TTL for more frequent refreshes
   
+  # Production reactivation settings
+  reactivation:
+    min_score: 65.0             # Slightly lower threshold to catch more reactivations
+    min_price_change: 1.5       # Lower threshold
+    min_volume_change: 40.0     # Lower threshold
+    smart_money_weight: 2.5     # Higher weight for smart money in production
+
 # Wallet Intelligence
 wallet_intelligence:
   profile_cache_ttl: 3600  # 1 heure en secondes

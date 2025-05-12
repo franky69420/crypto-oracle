@@ -33,41 +33,37 @@ type WalletHolding struct {
 	LastActive       time.Time `json:"last_active"`
 }
 
-// WalletRiskFactors représente les facteurs de risque d'un wallet
-type WalletRiskFactors struct {
-	WalletAddress       string    `json:"wallet_address"`
-	RiskScore           float64   `json:"risk_score"`
-	FalseFlaggedTokens  int       `json:"false_flagged_tokens"`
-	RugpullExitRate     float64   `json:"rugpull_exit_rate"`
-	FastSellRate        float64   `json:"fast_sell_rate"`
-	LongHoldRate        float64   `json:"long_hold_rate"`
-	UpdatedAt           time.Time `json:"updated_at"`
-}
-
-// WalletInteraction représente une interaction entre un wallet et un token
+// WalletInteraction représente une interaction d'un wallet avec un token
 type WalletInteraction struct {
-	ID                 string    `json:"id"`
-	WalletAddress      string    `json:"wallet_address"`
-	TokenAddress       string    `json:"token_address"`
-	TokenSymbol        string    `json:"token_symbol,omitempty"`
-	TxHash             string    `json:"tx_hash"`
-	BlockNumber        int64     `json:"block_number"`
-	Timestamp          time.Time `json:"timestamp"`
-	ActionType         string    `json:"action_type"` // "buy", "sell", "transfer", etc.
-	Amount             float64   `json:"amount"`
-	Value              float64   `json:"value"`
-	Price              float64   `json:"price"`
-	Success            bool      `json:"success"`
-	RelatedBuyTimestamp time.Time `json:"related_buy_timestamp,omitempty"`
-	TokenRiskFactor    float64   `json:"token_risk_factor,omitempty"`
+	ID                    string    `json:"id"`
+	WalletAddress         string    `json:"wallet_address"`
+	TokenAddress          string    `json:"token_address"`
+	TokenSymbol           string    `json:"token_symbol"`
+	Type                  string    `json:"type"` // buy, sell, transfer, etc.
+	ActionType            string    `json:"action_type"` // "buy", "sell", "transfer", etc.
+	Value                 float64   `json:"value"`
+	Amount                float64   `json:"amount"`
+	Price                 float64   `json:"price"`
+	Timestamp             time.Time `json:"timestamp"`
+	TxHash                string    `json:"tx_hash"`
+	BlockNumber           uint64    `json:"block_number"`
+	Success               bool      `json:"success"`
+	RelatedBuyTimestamp   time.Time `json:"related_buy_timestamp,omitempty"`
+	TokenRiskFactor       float64   `json:"token_risk_factor,omitempty"`
 }
 
-// WalletToken représente la relation entre un wallet et un token
+// WalletToken représente un token détenu par un wallet
 type WalletToken struct {
 	WalletAddress        string    `json:"wallet_address"`
 	TokenAddress         string    `json:"token_address"`
-	TokenSymbol          string    `json:"token_symbol,omitempty"`
-	TokenName            string    `json:"token_name,omitempty"`
+	TokenSymbol          string    `json:"token_symbol"`
+	TokenName            string    `json:"token_name"`
+	Balance              float64   `json:"balance"`
+	Value                float64   `json:"value"`
+	BuyCount             int       `json:"buy_count"`
+	SellCount            int       `json:"sell_count"`
+	FirstBuyAt           time.Time `json:"first_buy_at"`
+	LastActionAt         time.Time `json:"last_action_at"`
 	FirstInteractionTime time.Time `json:"first_interaction_time"`
 	LastInteractionTime  time.Time `json:"last_interaction_time"`
 	TransactionCount     int       `json:"transaction_count"`
@@ -76,7 +72,23 @@ type WalletToken struct {
 	NetProfit            float64   `json:"net_profit,omitempty"`
 }
 
-// HolderQualityReport représente un rapport sur la qualité des détenteurs d'un token
+// WalletRiskFactors représente les facteurs de risque d'un wallet
+type WalletRiskFactors struct {
+	WalletAddress      string    `json:"wallet_address"`
+	RiskScore          float64   `json:"risk_score"`
+	RugpullTokens      int       `json:"rugpull_tokens"`
+	ScamTokens         int       `json:"scam_tokens"`
+	HighRiskActivity   float64   `json:"high_risk_activity"`
+	FastSellRatio      float64   `json:"fast_sell_ratio"`
+	FalseFlaggedTokens int       `json:"false_flagged_tokens"`
+	RugpullExitRate    float64   `json:"rugpull_exit_rate"`
+	FastSellRate       float64   `json:"fast_sell_rate"`
+	LongHoldRate       float64   `json:"long_hold_rate"`
+	LastUpdated        time.Time `json:"last_updated"`
+	UpdatedAt          time.Time `json:"updated_at"`
+}
+
+// HolderQualityReport contient les informations sur la qualité des holders d'un token
 type HolderQualityReport struct {
 	TokenAddress         string             `json:"token_address"`
 	TotalHolders         int                `json:"total_holders"`
